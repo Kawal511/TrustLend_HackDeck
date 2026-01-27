@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createLoanSchema } from "@/lib/validators";
 import { calculateLoanLimit } from "@/lib/trust";
+import { createEmailReminders } from "@/lib/reminders";
 
 // POST - Create new loan
 export async function POST(req: Request) {
@@ -88,6 +89,9 @@ export async function POST(req: Request) {
                 borrower: true
             }
         });
+
+        // Create email reminders
+        await createEmailReminders(loan.id, loan.dueDate);
 
         return NextResponse.json(loan, { status: 201 });
 

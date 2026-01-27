@@ -20,11 +20,18 @@ model User {
   trustScore        Int      @default(100)
   trustHistory      String?  // JSON stored as string for SQLite
   
+  phoneNumber       String?
+  voiceRemindersEnabled Boolean  @default(false)
+  
   loansGiven        Loan[]   @relation("Lender")
   loansTaken        Loan[]   @relation("Borrower")
   
   repaymentsGiven   Repayment[] @relation("Payer")
   repaymentsReceived Repayment[] @relation("Receiver")
+  
+  userIntegrations  UserIntegration[]
+  loanTemplates     LoanTemplate[]
+  disputeMessages   DisputeMessage[]
   
   isSearchable      Boolean  @default(true)
   
@@ -53,6 +60,9 @@ model Loan {
   status          String   // ACTIVE, COMPLETED, OVERDUE, DISPUTED, CANCELLED
   
   repayments      Repayment[]
+  emailReminders  EmailReminder[]
+  voiceReminders  VoiceReminder[]
+  disputeThread   DisputeThread?
   
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -87,4 +97,117 @@ model Repayment {
   createdAt       DateTime @default(now())
   
   @@index([loanId])
+}
+
+model UserIntegration {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  
+  provider      String   // "google_calendar"
+  accessToken   String
+  refreshToken  String
+  expiresAt     DateTime
+  
+  isActive      Boolean  @default(true)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([userId, provider])
+}
+
+model EmailReminder {
+  id          String   @id @default(uuid())
+  loanId      String
+  loan        Loan     @relation(fields: [loanId], references: [id])
+  type        String   // "7_DAY" | "3_DAY" | "1_DAY" | "OVERDUE"
+  sentAt      DateTime?
+  scheduledFor DateTime
+  status      String   // "PENDING" | "SENT" | "FAILED"
+  createdAt   DateTime @default(now())
+  
+  @@index([scheduledFor, status])
+}
+
+model VoiceReminder {
+  id          String   @id @default(uuid())
+  loanId      String
+  loan        Loan     @relation(fields: [loanId], references: [id])
+  phoneNumber String
+  callId      String?  // Bolna call ID
+  status      String   // "SCHEDULED" | "CALLING" | "COMPLETED" | "FAILED" | "NO_ANSWER"
+  duration    Int?     // Call duration in seconds
+  transcript  String?  // Call transcript
+  scheduledFor DateTime
+  calledAt    DateTime?
+  createdAt   DateTime @default(now())
+  
+  @@index([scheduledFor, status])
+}
+
+model LoanTemplate {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  name        String
+  amount      Float
+  purpose     String
+  daysUntilDue Int     // Default days from creation to due date
+  
+  isDefault   Boolean  @default(false)
+  useCount    Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model SystemTemplate {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  amount      Float
+  purpose     String
+  daysUntilDue Int
+  icon        String   // Emoji or icon name
+  category    String   // "student" | "family" | "emergency"
+  
+  createdAt   DateTime @default(now())
+}
+
+model DisputeThread {
+  id          String   @id @default(uuid())
+  loanId      String   @unique
+  loan        Loan     @relation(fields: [loanId], references: [id])
+  
+  status      String   // "OPEN" | "RESOLVED" | "ESCALATED"
+  resolution  String?  
+  
+  messages    DisputeMessage[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  resolvedAt  DateTime?
+}
+
+model DisputeMessage {
+  id          String   @id @default(uuid())
+  threadId    String
+  thread      DisputeThread @relation(fields: [threadId], references: [id])
+  
+  senderId    String
+  sender      User     @relation(fields: [senderId], references: [id])
+  
+  content     String
+  attachments String?  // JSON stored as string
+  
+  isAiGenerated Boolean @default(false)
+  aiSuggestion  String?  // If AI mediation
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([threadId])
 }

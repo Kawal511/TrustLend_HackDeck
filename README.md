@@ -29,6 +29,10 @@ A trust-based informal lending manager for friends, family, and communities. Tra
 - **📝 AI Contract Generator** - NLP-powered loan contracts using Groq AI
 - **🕸️ Trust Network Visualization** - D3.js interactive relationship graph
 - **🛡️ Fraud Detection System** - Admin dashboard with anomaly detection
+- **📧 Email Reminders** - Automated payment reminders via Resend API (7/3/1 day before due)
+- **📞 Voice Call Reminders** - AI-powered voice calls via Bolna AI with conversation tracking
+- **💬 AI Dispute Resolution** - Groq-powered mediation chat for loan disputes
+- **🛡️ Fraud Detection System** - Admin dashboard with anomaly detection
 
 ---
 
@@ -57,6 +61,9 @@ A trust-based informal lending manager for friends, family, and communities. Tra
 - **Authentication**: Clerk
 - **UI Components**: Shadcn/ui + Tailwind CSS
 - **AI**: Groq API (Llama 3.1)
+- **Email**: Resend API
+- **Voice**: Bolna AI
+- **Calendar**: Google Calendar API
 - **Visualization**: D3.js, Recharts
 - **PDF Generation**: jsPDF
 - **Validation**: Zod
