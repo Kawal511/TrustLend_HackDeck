@@ -7,7 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Settings, Bell, Shield, User } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Settings, Bell, Shield, User, Bot } from "lucide-react";
+import { AIServicesPanel } from "@/components/admin/AIServicesPanel";
 
 export default async function SettingsPage() {
     const { userId } = await auth();
@@ -16,18 +18,26 @@ export default async function SettingsPage() {
     const user = await currentUser();
 
     return (
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-6">
             {/* Header */}
             <div>
                 <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
                     <Settings className="h-8 w-8" />
                     Settings
                 </h1>
-                <p className="text-gray-500 mt-1">Manage your account preferences</p>
+                <p className="text-gray-500 mt-1">Manage your account preferences and test AI services</p>
             </div>
 
-            {/* Profile Settings */}
-            <Card>
+            <Tabs defaultValue="profile" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="profile">Profile</TabsTrigger>
+                    <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                    <TabsTrigger value="ai-services">AI Services</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="profile" className="space-y-6">
+                    {/* Profile Settings */}
+                    <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <User className="h-5 w-5" />
@@ -94,6 +104,42 @@ export default async function SettingsPage() {
                     </div>
                 </CardContent>
             </Card>
+                </TabsContent>
+
+                <TabsContent value="notifications" className="space-y-6">
+            {/* Notifications */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Bell className="h-5 w-5" />
+                        Notifications
+                    </CardTitle>
+                    <CardDescription>Manage your notification preferences</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <Label>Email Reminders</Label>
+                            <p className="text-sm text-gray-500">Receive reminders before due dates</p>
+                        </div>
+                        <Switch defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <Label>Voice Call Reminders</Label>
+                            <p className="text-sm text-gray-500">Automated voice calls for important reminders</p>
+                        </div>
+                        <Switch />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <Label>Loan Confirmations</Label>
+                            <p className="text-sm text-gray-500">Notify when payments are confirmed</p>
+                        </div>
+                        <Switch defaultChecked />
+                    </div>
+                </CardContent>
+            </Card>
 
             {/* Privacy */}
             <Card>
@@ -140,6 +186,12 @@ export default async function SettingsPage() {
                     </div>
                 </CardContent>
             </Card>
+                </TabsContent>
+
+                <TabsContent value="ai-services" className="space-y-6">
+                    <AIServicesPanel />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }
