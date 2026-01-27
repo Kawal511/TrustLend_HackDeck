@@ -1,4 +1,5 @@
 // components/trust/TrustNetworkViz.tsx - D3.js network visualization
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client";
 

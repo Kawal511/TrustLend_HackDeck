@@ -18,6 +18,18 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Email query required" }, { status: 400 });
         }
 
+        // Check if searching for self
+        const selfUser = await prisma.user.findFirst({
+            where: {
+                email: { equals: email }, // exact match
+                id: userId
+            }
+        });
+
+        if (selfUser) {
+            return NextResponse.json({ error: "You cannot lend to yourself" }, { status: 400 });
+        }
+
         const user = await prisma.user.findFirst({
             where: {
                 email: {

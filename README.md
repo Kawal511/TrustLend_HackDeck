@@ -21,6 +21,8 @@ A trust-based informal lending manager for friends, family, and communities. Tra
 - **📊 Dashboard** - Overview of loans, balances, and trust score
 - **🔍 User Search** - Find borrowers by email address
 - **🔔 Real-time Notifications** - Loan requests, repayments, confirmations, overdue alerts
+- **📄 CSV Export** - Export specific loan lists to CSV for record keeping
+- **📜 PDF Contracts** - Generate formal PDF loan agreements
 
 ### AI-Powered Features
 - **🤖 AI Repayment Optimizer** - Personalized repayment schedules with 3 plan options
@@ -56,6 +58,7 @@ A trust-based informal lending manager for friends, family, and communities. Tra
 - **UI Components**: Shadcn/ui + Tailwind CSS
 - **AI**: Groq API (Llama 3.1)
 - **Visualization**: D3.js, Recharts
+- **PDF Generation**: jsPDF
 - **Validation**: Zod
 
 ---

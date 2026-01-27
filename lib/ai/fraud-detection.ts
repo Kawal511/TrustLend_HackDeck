@@ -11,7 +11,7 @@ export interface FraudAlert {
     redFlags: RedFlag[];
     actionTaken?: "reviewed" | "blocked" | "dismissed";
     createdAt: Date;
-    details: Record<string, any>;
+    details: Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export type FraudType =

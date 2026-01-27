@@ -246,6 +246,13 @@ export function LoanForm() {
                     "Create Loan"
                 )}
             </Button>
+            {(!borrowerInfo || !amount || !dueDate) && (
+                 <p className="text-sm text-center text-muted-foreground mt-2">
+                    {!borrowerInfo ? "Search for a borrower above" :
+                     !amount ? "Enter loan amount" :
+                     "Select a due date"}
+                 </p>
+            )}
         </form>
     );
 }

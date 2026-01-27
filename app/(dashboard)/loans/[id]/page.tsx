@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TrustBadge } from "@/components/trust/TrustBadge";
 import { RepaymentForm } from "@/components/loans/RepaymentForm";
 import { RepaymentHistory } from "@/components/loans/RepaymentHistory";
+import { ContractExportButton } from "@/components/loans/ContractExportButton";
 import { formatCurrency, formatDate, getStatusColor, getDueDateStatus } from "@/lib/utils";
 import { ArrowLeft, Calendar, User, FileText, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -57,6 +58,8 @@ export default async function LoanDetailPage({
         ? `${otherParty.firstName} ${otherParty.lastName}`
         : otherParty.email;
 
+    const serializedLoan = JSON.parse(JSON.stringify(loan));
+
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             {/* Back button */}
@@ -82,9 +85,12 @@ export default async function LoanDetailPage({
                                 {isLender ? "You lent to" : "You borrowed from"} {displayName}
                             </p>
                         </div>
-                        {canRecordPayment && (
-                            <RepaymentForm loanId={loan.id} maxAmount={loan.balance} />
-                        )}
+                        <div className="flex gap-2">
+                            <ContractExportButton loan={serializedLoan} />
+                            {canRecordPayment && (
+                                <RepaymentForm loanId={loan.id} maxAmount={loan.balance} />
+                            )}
+                        </div>
                     </div>
                 </CardHeader>
 

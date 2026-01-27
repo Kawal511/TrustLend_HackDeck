@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoanCard } from "@/components/loans/LoanCard";
+import { LoansExportButton } from "@/components/loans/LoansExportButton";
 import { PlusCircle, Wallet } from "lucide-react";
 
 async function getLoans(userId: string) {
@@ -32,6 +33,10 @@ export default async function LoansPage() {
 
     const { loansGiven, loansTaken } = await getLoans(userId);
 
+    // Serialize for client component
+    const serializedGiven = JSON.parse(JSON.stringify(loansGiven));
+    const serializedTaken = JSON.parse(JSON.stringify(loansTaken));
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -40,12 +45,15 @@ export default async function LoansPage() {
                     <h1 className="text-3xl font-bold text-gray-900">My Loans</h1>
                     <p className="text-gray-500 mt-1">Manage your lending and borrowing</p>
                 </div>
-                <Button asChild>
-                    <Link href="/loans/new">
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        New Loan
-                    </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <LoansExportButton loansGiven={serializedGiven} loansTaken={serializedTaken} />
+                    <Button asChild>
+                        <Link href="/loans/new">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            New Loan
+                        </Link>
+                    </Button>
+                </div>
             </div>
 
             {/* Tabs */}
