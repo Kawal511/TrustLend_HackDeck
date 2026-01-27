@@ -2,31 +2,63 @@
 
 **Lend with Clarity, Repay with Dignity**
 
-A trust-based informal lending manager for friends, family, and communities. Track loans, record repayments, and build trust — all without embarrassment.
+A trust-based informal lending manager for friends, family, and communities. Track loans, record repayments, build trust scores, and leverage AI-powered features — all without embarrassment.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
 ![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)
 ![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?logo=clerk)
 
+---
+
 ## ✨ Features
 
+### Core Features
 - **🔐 Secure Authentication** - Email & Google OAuth via Clerk
 - **💳 Loan Management** - Create, track, and manage loans between users
 - **💸 Repayment Tracking** - Both parties can record & confirm payments
 - **⭐ Trust Score System** - 0-150 score with tier badges (Bronze → Diamond)
 - **📊 Dashboard** - Overview of loans, balances, and trust score
 - **🔍 User Search** - Find borrowers by email address
-- **📱 Responsive Design** - Works on desktop and mobile
+- **🔔 Real-time Notifications** - Loan requests, repayments, confirmations, overdue alerts
+
+### AI-Powered Features
+- **🤖 AI Repayment Optimizer** - Personalized repayment schedules with 3 plan options
+- **📝 AI Contract Generator** - NLP-powered loan contracts using Groq AI
+- **🕸️ Trust Network Visualization** - D3.js interactive relationship graph
+- **🛡️ Fraud Detection System** - Admin dashboard with anomaly detection
+
+---
+
+## 📱 Pages & Routes
+
+| Route | Description |
+|-------|-------------|
+| `/` | Main dashboard with loan overview and stats |
+| `/loans` | List all your loans (given and taken) |
+| `/loans/new` | Create a new loan |
+| `/loans/[id]` | View loan details and repayments |
+| `/loans/[id]/schedule` | AI Repayment Schedule Builder |
+| `/profile` | Your trust score profile and history |
+| `/contracts/new` | AI Contract Generator |
+| `/network` | Trust Network Visualization |
+| `/admin/fraud` | Fraud Detection Dashboard |
+| `/settings` | Account settings |
+
+---
 
 ## 🏗️ Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
+- **Framework**: Next.js 16 (App Router, Turbopack)
 - **Language**: TypeScript
 - **Database**: SQLite with Prisma ORM
 - **Authentication**: Clerk
 - **UI Components**: Shadcn/ui + Tailwind CSS
+- **AI**: Groq API (Llama 3.1)
+- **Visualization**: D3.js, Recharts
 - **Validation**: Zod
+
+---
 
 ## 🚀 Quick Start
 
@@ -34,13 +66,14 @@ A trust-based informal lending manager for friends, family, and communities. Tra
 
 - Node.js 18+ 
 - npm or yarn
-- A Clerk account (free at [clerk.com](https://clerk.com))
+- A [Clerk](https://clerk.com) account (free)
+- A [Groq](https://console.groq.com) API key (free, for AI features)
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/trustlend.git
-cd trustlend
+git clone https://github.com/Kawal511/TrustLend_HackDeck.git
+cd TrustLend_HackDeck
 ```
 
 ### 2. Install Dependencies
@@ -54,9 +87,11 @@ npm install
 Create a `.env.local` file in the root directory:
 
 ```bash
-# Clerk Authentication
+# Clerk Authentication (get from https://dashboard.clerk.com)
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YOUR_KEY_HERE
 CLERK_SECRET_KEY=sk_test_YOUR_KEY_HERE
+
+# Clerk Routes
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
@@ -67,18 +102,29 @@ DATABASE_URL="file:./dev.db"
 
 # App URL
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Groq API for AI Contract Generator (get from https://console.groq.com)
+GROQ_API_KEY=gsk_YOUR_GROQ_API_KEY_HERE
 ```
 
-**To get Clerk API keys:**
+#### Getting API Keys
+
+**Clerk (Authentication):**
 1. Go to [clerk.com](https://clerk.com) and sign up
 2. Create a new application
 3. Go to **API Keys** in the dashboard
 4. Copy the **Publishable Key** and **Secret Key**
 
+**Groq (AI Features):**
+1. Go to [console.groq.com](https://console.groq.com)
+2. Sign up for a free account
+3. Go to **API Keys** and create a new key
+4. Copy the key (starts with `gsk_`)
+
 ### 4. Set Up Database
 
 ```bash
-# Generate Prisma client and create database
+# Generate Prisma client and create database tables
 npx prisma db push
 ```
 
@@ -90,45 +136,101 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+---
+
 ## 📁 Project Structure
 
 ```
 trustlend/
 ├── app/
-│   ├── (auth)/              # Sign-in/sign-up pages
-│   ├── (dashboard)/         # Protected dashboard pages
-│   │   ├── loans/           # Loan management
-│   │   ├── profile/         # Trust score profile
-│   │   └── settings/        # User settings
-│   └── api/                 # API routes
+│   ├── (auth)/                    # Sign-in/sign-up pages
+│   ├── (dashboard)/               # Protected dashboard pages
+│   │   ├── loans/                 # Loan management
+│   │   │   ├── [id]/schedule/     # AI Repayment Schedule
+│   │   │   └── new/               # New loan form
+│   │   ├── contracts/new/         # AI Contract Generator
+│   │   ├── network/               # Trust Network Viz
+│   │   ├── admin/fraud/           # Fraud Detection
+│   │   ├── profile/               # Trust score profile
+│   │   └── settings/              # User settings
+│   └── api/                       # API routes
+│       ├── loans/                 # Loan CRUD
+│       ├── contracts/generate/    # AI contract generation
+│       ├── notifications/         # Notifications API
+│       └── users/search/          # User search
 ├── components/
-│   ├── layout/              # Navbar, Sidebar
-│   ├── loans/               # LoanCard, LoanForm, etc.
-│   ├── trust/               # TrustBadge, TrustGauge
-│   └── ui/                  # Shadcn UI components
+│   ├── layout/                    # Navbar, Sidebar, NotificationDropdown
+│   ├── loans/                     # LoanCard, LoanForm, RepaymentScheduleBuilder, ContractBuilder
+│   ├── trust/                     # TrustBadge, TrustGauge, TrustNetworkViz
+│   ├── admin/                     # FraudAlerts
+│   └── ui/                        # Shadcn UI components
 ├── lib/
-│   ├── prisma.ts            # Prisma client
-│   ├── trust.ts             # Trust score calculations
-│   ├── utils.ts             # Utility functions
-│   └── validators.ts        # Zod schemas
+│   ├── ai/                        # AI algorithms
+│   │   ├── repayment-optimizer.ts # Repayment plan generation
+│   │   ├── contract-generator.ts  # NLP contract generation (Groq)
+│   │   └── fraud-detection.ts     # Anomaly detection
+│   ├── graph/                     # Graph algorithms
+│   │   └── trust-network.ts       # Network analysis
+│   ├── prisma.ts                  # Prisma client
+│   ├── trust.ts                   # Trust score calculations
+│   └── utils.ts                   # Utility functions
 └── prisma/
-    └── schema.prisma        # Database schema
+    └── schema.prisma              # Database schema
 ```
+
+---
 
 ## 🎯 Trust Score System
 
 | Score Range | Tier | Loan Limit | Active Loans |
 |-------------|------|------------|--------------|
-| 0-49 | Bronze | $500 | 1 |
-| 50-79 | Silver | $1,500 | 2 |
-| 80-109 | Gold | $3,000 | 3 |
-| 110-139 | Platinum | $6,000 | 5 |
-| 140-150 | Diamond | $10,000 | 10 |
+| 0-49 | 🥉 Bronze | $500 | 1 |
+| 50-79 | 🥈 Silver | $1,500 | 2 |
+| 80-109 | 🥇 Gold | $3,000 | 3 |
+| 110-139 | 💎 Platinum | $6,000 | 5 |
+| 140-150 | 👑 Diamond | $10,000 | 10 |
 
 **Score Changes:**
 - ✅ On-time repayment: +5 to +10 points
 - ⚠️ Late repayment: -5 to -10 points  
 - ❌ Disputed payment: -15 points
+
+---
+
+## 🤖 AI Features Detail
+
+### 1. Repayment Optimizer
+Generates 3 personalized repayment plans:
+- **Aggressive** - Pay off 40% faster with higher payments
+- **Balanced** - Optimal balance of speed and affordability
+- **Conservative** - Lower payments over longer duration
+
+Based on: trust score, loan amount, payment frequency preference
+
+### 2. Contract Generator
+Uses Groq AI (Llama 3.1) to:
+- Parse natural language loan descriptions
+- Extract terms: amount, duration, interest rate, payment schedule
+- Generate formal contract text
+- Support digital signatures from both parties
+
+### 3. Trust Network
+Visualizes lending relationships with:
+- Force-directed D3.js graph
+- Node size = trust score
+- Edge thickness = loan volume
+- Color coding by loan status
+- Network metrics: centrality, clustering
+
+### 4. Fraud Detection
+Detects suspicious patterns:
+- Velocity abuse (too many loans quickly)
+- Amount anomalies (unusually large requests)
+- New account abuse
+- Dispute patterns
+- Circular lending
+
+---
 
 ## 🔧 Available Scripts
 
@@ -138,6 +240,8 @@ npm run build    # Build for production
 npm run start    # Start production server
 npm run lint     # Run ESLint
 ```
+
+---
 
 ## 📝 API Endpoints
 
@@ -150,6 +254,10 @@ npm run lint     # Run ESLint
 | POST | `/api/loans/[id]/repay` | Record repayment |
 | PATCH | `/api/loans/[id]/repay` | Confirm/dispute repayment |
 | GET | `/api/users/search` | Search users by email |
+| POST | `/api/contracts/generate` | Generate AI contract |
+| GET | `/api/notifications` | Get user notifications |
+
+---
 
 ## 🚀 Deployment
 
@@ -160,14 +268,17 @@ npm run lint     # Run ESLint
 3. Add environment variables in Vercel dashboard
 4. Deploy!
 
-**Note:** For production, consider using a hosted database like:
-- Turso (SQLite edge)
-- PlanetScale (MySQL)
-- Supabase (PostgreSQL)
+**For production**, consider using:
+- **Turso** or **PlanetScale** for database
+- Keep `GROQ_API_KEY` in production secrets
+
+---
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
 
 ## 📄 License
 
