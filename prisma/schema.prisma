@@ -1,213 +1,175 @@
-// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
-  id                String   @id // Clerk user ID
-  email             String   @unique
-  username          String?  @unique
-  firstName         String?
-  lastName          String?
-  imageUrl          String?
-  
-  trustScore        Int      @default(100)
-  trustHistory      String?  // JSON stored as string for SQLite
-  
-  phoneNumber       String?
-  voiceRemindersEnabled Boolean  @default(false)
-  
-  loansGiven        Loan[]   @relation("Lender")
-  loansTaken        Loan[]   @relation("Borrower")
-  
-  repaymentsGiven   Repayment[] @relation("Payer")
-  repaymentsReceived Repayment[] @relation("Receiver")
-  
-  userIntegrations  UserIntegration[]
-  loanTemplates     LoanTemplate[]
-  disputeMessages   DisputeMessage[]
-  
-  isSearchable      Boolean  @default(true)
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                    String            @id
+  email                 String            @unique
+  username              String?           @unique
+  firstName             String?
+  lastName              String?
+  imageUrl              String?
+  trustScore            Int               @default(100)
+  trustHistory          String?
+  phoneNumber           String?
+  voiceRemindersEnabled Boolean           @default(false)
+  isSearchable          Boolean           @default(true)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  disputeMessages       DisputeMessage[]
+  loansTaken            Loan[]            @relation("Borrower")
+  loansGiven            Loan[]            @relation("Lender")
+  loanTemplates         LoanTemplate[]
+  repaymentsReceived    Repayment[]       @relation("Receiver")
+  repaymentsGiven       Repayment[]       @relation("Payer")
+  userIntegrations      UserIntegration[]
 }
 
 model Loan {
-  id              String   @id @default(uuid())
-  
-  lenderId        String
-  lender          User     @relation("Lender", fields: [lenderId], references: [id])
-  
-  borrowerId      String
-  borrower        User     @relation("Borrower", fields: [borrowerId], references: [id])
-  
-  amount          Float
-  balance         Float    // Remaining amount
-  currency        String   @default("USD")
-  
-  purpose         String?
-  notes           String?
-  
-  dueDate         DateTime
-  
-  status          String   // ACTIVE, COMPLETED, OVERDUE, DISPUTED, CANCELLED
-  
-  repayments      Repayment[]
-  emailReminders  EmailReminder[]
-  voiceReminders  VoiceReminder[]
-  disputeThread   DisputeThread?
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  completedAt     DateTime?
-  
+  id             String          @id @default(uuid())
+  lenderId       String
+  borrowerId     String
+  amount         Float
+  balance        Float
+  currency       String          @default("USD")
+  purpose        String?
+  notes          String?
+  dueDate        DateTime
+  status         String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  completedAt    DateTime?
+  disputeThread  DisputeThread?
+  emailReminders EmailReminder[]
+  borrower       User            @relation("Borrower", fields: [borrowerId], references: [id])
+  lender         User            @relation("Lender", fields: [lenderId], references: [id])
+  repayments     Repayment[]
+  voiceReminders VoiceReminder[]
+
   @@index([lenderId])
   @@index([borrowerId])
   @@index([status])
 }
 
 model Repayment {
-  id              String   @id @default(uuid())
-  
-  loanId          String
-  loan            Loan     @relation(fields: [loanId], references: [id])
-  
-  payerId         String
-  payer           User     @relation("Payer", fields: [payerId], references: [id])
-  
-  receiverId      String
-  receiver        User     @relation("Receiver", fields: [receiverId], references: [id])
-  
-  amount          Float
-  note            String?
-  
-  status          String   // PENDING_CONFIRMATION, CONFIRMED, DISPUTED
-  
-  initiatedBy     String   // "lender" or "borrower"
-  confirmedBy     String?
-  confirmedAt     DateTime?
-  
-  createdAt       DateTime @default(now())
-  
+  id          String    @id @default(uuid())
+  loanId      String
+  payerId     String
+  receiverId  String
+  amount      Float
+  note        String?
+  status      String
+  initiatedBy String
+  confirmedBy String?
+  confirmedAt DateTime?
+  createdAt   DateTime  @default(now())
+  receiver    User      @relation("Receiver", fields: [receiverId], references: [id])
+  payer       User      @relation("Payer", fields: [payerId], references: [id])
+  loan        Loan      @relation(fields: [loanId], references: [id])
+
   @@index([loanId])
 }
 
 model UserIntegration {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  
-  provider      String   // "google_calendar"
-  accessToken   String
-  refreshToken  String
-  expiresAt     DateTime
-  
-  isActive      Boolean  @default(true)
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
+  id           String   @id @default(uuid())
+  userId       String
+  provider     String
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+
   @@unique([userId, provider])
 }
 
 model EmailReminder {
-  id          String   @id @default(uuid())
-  loanId      String
-  loan        Loan     @relation(fields: [loanId], references: [id])
-  type        String   // "7_DAY" | "3_DAY" | "1_DAY" | "OVERDUE"
-  sentAt      DateTime?
+  id           String    @id @default(uuid())
+  loanId       String
+  type         String
+  sentAt       DateTime?
   scheduledFor DateTime
-  status      String   // "PENDING" | "SENT" | "FAILED"
-  createdAt   DateTime @default(now())
-  
+  status       String
+  createdAt    DateTime  @default(now())
+  loan         Loan      @relation(fields: [loanId], references: [id])
+
   @@index([scheduledFor, status])
 }
 
 model VoiceReminder {
-  id          String   @id @default(uuid())
-  loanId      String
-  loan        Loan     @relation(fields: [loanId], references: [id])
-  phoneNumber String
-  callId      String?  // Bolna call ID
-  status      String   // "SCHEDULED" | "CALLING" | "COMPLETED" | "FAILED" | "NO_ANSWER"
-  duration    Int?     // Call duration in seconds
-  transcript  String?  // Call transcript
+  id           String    @id @default(uuid())
+  loanId       String
+  phoneNumber  String
+  callId       String?
+  status       String
+  duration     Int?
+  transcript   String?
   scheduledFor DateTime
-  calledAt    DateTime?
-  createdAt   DateTime @default(now())
-  
+  calledAt     DateTime?
+  createdAt    DateTime  @default(now())
+  loan         Loan      @relation(fields: [loanId], references: [id])
+
   @@index([scheduledFor, status])
 }
 
 model LoanTemplate {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  
-  name        String
-  amount      Float
-  purpose     String
-  daysUntilDue Int     // Default days from creation to due date
-  
-  isDefault   Boolean  @default(false)
-  useCount    Int      @default(0)
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id           String   @id @default(uuid())
+  userId       String
+  name         String
+  amount       Float
+  purpose      String
+  daysUntilDue Int
+  isDefault    Boolean  @default(false)
+  useCount     Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+
   @@index([userId])
 }
 
 model SystemTemplate {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String
-  amount      Float
-  purpose     String
+  id           String   @id @default(uuid())
+  name         String   @unique
+  description  String
+  amount       Float
+  purpose      String
   daysUntilDue Int
-  icon        String   // Emoji or icon name
-  category    String   // "student" | "family" | "emergency"
-  
-  createdAt   DateTime @default(now())
+  icon         String
+  category     String
+  createdAt    DateTime @default(now())
 }
 
 model DisputeThread {
-  id          String   @id @default(uuid())
-  loanId      String   @unique
-  loan        Loan     @relation(fields: [loanId], references: [id])
-  
-  status      String   // "OPEN" | "RESOLVED" | "ESCALATED"
-  resolution  String?  
-  
-  messages    DisputeMessage[]
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  resolvedAt  DateTime?
+  id         String           @id @default(uuid())
+  loanId     String           @unique
+  status     String
+  resolution String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  resolvedAt DateTime?
+  messages   DisputeMessage[]
+  loan       Loan             @relation(fields: [loanId], references: [id])
 }
 
 model DisputeMessage {
-  id          String   @id @default(uuid())
-  threadId    String
-  thread      DisputeThread @relation(fields: [threadId], references: [id])
-  
-  senderId    String
-  sender      User     @relation(fields: [senderId], references: [id])
-  
-  content     String
-  attachments String?  // JSON stored as string
-  
-  isAiGenerated Boolean @default(false)
-  aiSuggestion  String?  // If AI mediation
-  
-  createdAt   DateTime @default(now())
-  
+  id            String        @id @default(uuid())
+  threadId      String
+  senderId      String
+  content       String
+  attachments   String?
+  isAiGenerated Boolean       @default(false)
+  aiSuggestion  String?
+  createdAt     DateTime      @default(now())
+  sender        User          @relation(fields: [senderId], references: [id])
+  thread        DisputeThread @relation(fields: [threadId], references: [id])
+
   @@index([threadId])
 }
