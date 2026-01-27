@@ -8,8 +8,8 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Bell, Shield, User, Bot } from "lucide-react";
-import { AIServicesPanel } from "@/components/admin/AIServicesPanel";
+import { Settings, Bell, User, Link2, Shield } from "lucide-react";
+import { GoogleCalendarConnect } from "@/components/settings/GoogleCalendarConnect";
 
 export default async function SettingsPage() {
     const { userId } = await auth();
@@ -25,14 +25,14 @@ export default async function SettingsPage() {
                     <Settings className="h-8 w-8" />
                     Settings
                 </h1>
-                <p className="text-gray-500 mt-1">Manage your account preferences and test AI services</p>
+                <p className="text-gray-500 mt-1">Manage your account preferences and integrations</p>
             </div>
 
             <Tabs defaultValue="profile" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="profile">Profile</TabsTrigger>
                     <TabsTrigger value="notifications">Notifications</TabsTrigger>
-                    <TabsTrigger value="ai-services">AI Services</TabsTrigger>
+                    <TabsTrigger value="integrations">Integrations</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="profile" className="space-y-6">
@@ -188,8 +188,20 @@ export default async function SettingsPage() {
             </Card>
                 </TabsContent>
 
-                <TabsContent value="ai-services" className="space-y-6">
-                    <AIServicesPanel />
+                <TabsContent value="integrations" className="space-y-6">
+                    {/* Integrations */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Link2 className="h-5 w-5" />
+                                Connected Services
+                            </CardTitle>
+                            <CardDescription>Manage your external service integrations</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <GoogleCalendarConnect />
+                        </CardContent>
+                    </Card>
                 </TabsContent>
             </Tabs>
         </div>

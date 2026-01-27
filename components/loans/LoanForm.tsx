@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrustBadge } from "@/components/trust/TrustBadge";
+import { AIContractButton } from "@/components/loans/AIContractButton";
 import { toast } from "sonner";
 import { Loader2, Search, User, AlertCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
@@ -166,8 +167,22 @@ export function LoanForm() {
             {/* Loan Details */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Loan Details</CardTitle>
-                    <CardDescription>Specify the amount and terms</CardDescription>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle>Loan Details</CardTitle>
+                            <CardDescription>Specify the amount and terms</CardDescription>
+                        </div>
+                        {borrowerInfo && (
+                            <AIContractButton
+                                onContractGenerated={(contract) => {
+                                    if (contract.amount) setAmount(contract.amount.toString());
+                                    if (contract.dueDate) setDueDate(contract.dueDate);
+                                    if (contract.purpose) setPurpose(contract.purpose);
+                                    if (contract.terms) setNotes(contract.terms);
+                                }}
+                            />
+                        )}
+                    </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {/* Amount */}

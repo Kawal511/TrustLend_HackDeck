@@ -13,6 +13,8 @@ import { TrustBadge } from "@/components/trust/TrustBadge";
 import { RepaymentForm } from "@/components/loans/RepaymentForm";
 import { RepaymentHistory } from "@/components/loans/RepaymentHistory";
 import { ContractExportButton } from "@/components/loans/ContractExportButton";
+import { CalendarExportButton } from "@/components/loans/CalendarExportButton";
+import { RemindersDisplay } from "@/components/loans/RemindersDisplay";
 import { formatCurrency, formatDate, getStatusColor, getDueDateStatus } from "@/lib/utils";
 import { ArrowLeft, Calendar, User, FileText, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -86,6 +88,11 @@ export default async function LoanDetailPage({
                             </p>
                         </div>
                         <div className="flex gap-2">
+                            <CalendarExportButton 
+                                loanId={loan.id} 
+                                loanAmount={loan.amount} 
+                                dueDate={loan.dueDate} 
+                            />
                             <ContractExportButton loan={serializedLoan} />
                             {canRecordPayment && (
                                 <RepaymentForm loanId={loan.id} maxAmount={loan.balance} />
@@ -176,7 +183,10 @@ export default async function LoanDetailPage({
                                 </h3>
                                 <p className="text-gray-700">{loan.notes}</p>
                             </div>
-                        )}
+                Automated Reminders */}
+            <RemindersDisplay loanId={loan.id} />
+
+            {/*         )}
                     </div>
                 </CardContent>
             </Card>
