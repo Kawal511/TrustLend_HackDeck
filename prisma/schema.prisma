@@ -1,0 +1,90 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String   @id // Clerk user ID
+  email             String   @unique
+  username          String?  @unique
+  firstName         String?
+  lastName          String?
+  imageUrl          String?
+  
+  trustScore        Int      @default(100)
+  trustHistory      String?  // JSON stored as string for SQLite
+  
+  loansGiven        Loan[]   @relation("Lender")
+  loansTaken        Loan[]   @relation("Borrower")
+  
+  repaymentsGiven   Repayment[] @relation("Payer")
+  repaymentsReceived Repayment[] @relation("Receiver")
+  
+  isSearchable      Boolean  @default(true)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Loan {
+  id              String   @id @default(uuid())
+  
+  lenderId        String
+  lender          User     @relation("Lender", fields: [lenderId], references: [id])
+  
+  borrowerId      String
+  borrower        User     @relation("Borrower", fields: [borrowerId], references: [id])
+  
+  amount          Float
+  balance         Float    // Remaining amount
+  currency        String   @default("USD")
+  
+  purpose         String?
+  notes           String?
+  
+  dueDate         DateTime
+  
+  status          String   // ACTIVE, COMPLETED, OVERDUE, DISPUTED, CANCELLED
+  
+  repayments      Repayment[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  completedAt     DateTime?
+  
+  @@index([lenderId])
+  @@index([borrowerId])
+  @@index([status])
+}
+
+model Repayment {
+  id              String   @id @default(uuid())
+  
+  loanId          String
+  loan            Loan     @relation(fields: [loanId], references: [id])
+  
+  payerId         String
+  payer           User     @relation("Payer", fields: [payerId], references: [id])
+  
+  receiverId      String
+  receiver        User     @relation("Receiver", fields: [receiverId], references: [id])
+  
+  amount          Float
+  note            String?
+  
+  status          String   // PENDING_CONFIRMATION, CONFIRMED, DISPUTED
+  
+  initiatedBy     String   // "lender" or "borrower"
+  confirmedBy     String?
+  confirmedAt     DateTime?
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([loanId])
+}
