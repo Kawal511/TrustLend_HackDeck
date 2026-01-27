@@ -25,16 +25,16 @@ A trust-based informal lending manager for friends, family, and communities. Tra
 - **📜 PDF Contracts** - Generate formal PDF loan agreements
 
 ### AI-Powered Features ✨
-- **🤖 AI Contract Generator** - NLP-powered loan contracts using Groq AI (Llama 3.1-70B)
+- **🤖 AI Contract Generator** - Integrated into loan creation flow (Groq AI with Llama 3.1-70B)
 - **📧 Automated Email Reminders** - Smart reminders via Resend API (7/3/1 days before due date)
 - **📞 AI Voice Call Reminders** - Bolna AI-powered voice calls with transcription & intent detection
 - **💬 AI Dispute Resolution** - Groq-powered mediation chat for loan disputes
 - **🕸️ Trust Network Visualization** - D3.js interactive relationship graph
 - **🛡️ Fraud Detection System** - Admin dashboard with anomaly detection
-- **📅 Google Calendar Integration** - Auto-export loan due dates to calendar
-- **🧪 AI Services Testing Panel** - Test all AI features directly from frontend (Settings page)
+- **📅 Google Calendar OAuth** - One-click export of loan due dates (with auto-refresh tokens)
+- **📊 Reminders Dashboard** - View all automated reminders on loan detail pages
 
-**All AI services are now accessible from the frontend!** Test them in Settings → AI Services tab.
+**AI features are contextually integrated throughout the app!** Generate contracts during loan creation, export to calendar from loan pages, and manage integrations in Settings.
 
 ---
 
@@ -51,7 +51,7 @@ A trust-based informal lending manager for friends, family, and communities. Tra
 | `/contracts/new` | AI Contract Generator |
 | `/network` | Trust Network Visualization |
 | `/admin/fraud` | Fraud Detection Dashboard |
-| `/settings` | Account settings & AI Services testing panel |
+| `/settings` | Account settings & service integrations (Google Calendar) |
 
 ---
 
@@ -128,9 +128,10 @@ RESEND_FROM_EMAIL=your-email@domain.com
 BOLNA_API_KEY=bn_YOUR_BOLNA_API_KEY_HERE
 BOLNA_AGENT_ID=your_bolna_agent_id
 
-# Google Calendar Integration (optional)
+# Google Calendar Integration (OAuth)
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 # Cron Job Security
 CRON_SECRET=your_random_secret_key_here
@@ -193,8 +194,10 @@ trustlend/
 │   │   ├── network/               # Trust Network Viz
 │   │   ├── admin/fraud/           # Fraud Detection
 │   │   ├── profile/               # Trust score profile
-│   │   └── settings/              # User settings + AI Services testing
+│   │   └── settings/              # User settings + service integrations
 │   └── api/                       # API routes
+│       ├── auth/google/           # Google OAuth flow
+│       ├── calendar/              # Calendar integration (status, export)
 │       ├── loans/                 # Loan CRUD + reminders
 │       ├── contracts/generate/    # AI contract generation
 │       ├── notifications/         # Notifications API
@@ -204,9 +207,10 @@ trustlend/
 │       └── webhooks/              # External service webhooks
 ├── components/
 │   ├── layout/                    # Navbar, Sidebar, NotificationDropdown
-│   ├── loans/                     # LoanCard, LoanForm, RepaymentScheduleBuilder, ContractBuilder
+│   ├── loans/                     # LoanCard, LoanForm, AIContractButton, CalendarExportButton, RemindersDisplay
 │   ├── trust/                     # TrustBadge, TrustGauge, TrustNetworkViz
-│   ├── admin/                     # FraudAlerts, AIServicesPanel
+│   ├── settings/                  # GoogleCalendarConnect
+│   ├── admin/                     # FraudAlerts
 │   └── ui/                        # Shadcn UI components
 ├── lib/
 │   ├── ai/                        # AI algorithms
@@ -248,33 +252,34 @@ trustlend/
 ## 🤖 AI Features Detail
 
 ### 1. AI Contract Generator (Groq/Llama 3.1-70B)
-- **Frontend Testing**: Settings → AI Services → Generate Sample Contract
+- **Where**: Integrated into loan creation flow
+- **How**: Click "Generate with AI" button when creating a loan
 - **API Endpoint**: `POST /api/contracts/generate`
 - **Features**:
   - Natural language contract generation
+  - Auto-fills loan form with extracted details
   - Formal legal language
-  - Customizable terms
   - Instant generation (~2-5 seconds)
 
 ### 2. Email Reminder System (Resend)
-- **Frontend Testing**: Settings → AI Services → Send Test Email
+- **Where**: Automatic for all loans (visible on loan detail pages)
+- **Schedule**: 7 days, 3 days, and 1 day before due date
 - **API Endpoints**: 
-  - `POST /api/test/email` - Send test email
-  - `GET /api/loans/[id]/reminders/email` - List reminders
-  - `POST /api/cron/send-reminders` - Trigger reminders
+  - `GET /api/loans/[id]/reminders/email` - View reminders
+  - `POST /api/cron/send-reminders` - Trigger reminders (automated)
 - **Features**:
-  - Automated reminders (7/3/1 days before due date)
-  - HTML email templates
+  - Automated HTML email reminders
   - Overdue notifications
+  - Status tracking (Sent, Pending, Failed)
   - Runs every 6 hours via cron
 
 ### 3. Voice Call Reminders (Bolna AI)
-- **Frontend Testing**: Settings → AI Services → Initiate Test Call
+- **Where**: Automatic for all loans (visible on loan detail pages)
+- **Schedule**: Daily at 10 AM for upcoming due dates
 - **API Endpoints**:
-  - `POST /api/test/voice` - Test voice call
-  - `GET /api/loans/[id]/reminders/voice` - List voice reminders
+  - `GET /api/loans/[id]/reminders/voice` - View voice reminders
   - `POST /api/loans/voice-reminder` - Schedule call
-  - `POST /api/cron/voice-reminders` - Trigger scheduled calls
+  - `POST /api/cron/voice-reminders` - Trigger scheduled calls (automated)
   - `POST /api/webhooks/bolna` - Post-call webhook
 - **Features**:
   - AI-powered voice conversations
@@ -283,67 +288,96 @@ trustlend/
   - Automatic dispute thread creation
   - Runs daily at 10 AM via cron
 
-### 4. Trust Network Visualization
-Visualizes lending relationships with:
-- Force-directed D3.js graph
-- Node size = trust score
-- Edge thickness = loan volume
-- Color coding by loan status
-- Network metrics: centrality, clustering
+### 4. Google Calendar Integration (OAuth 2.0)
+- **Where**: Loan detail pages & Settings → Integrations
+- **How**: Click "Add to Calendar" on any loan
+- **API Endpoints**:
+  - `GET /api/auth/google` - Initiate OAuth flow
+  - `GET /api/auth/google/callback` - Handle OAuth callback
+  - `GET /api/calendar/status` - Check connection status
+  - `POST /api/calendar/export` - Export loan to calendar
+- **Features**:
+  - One-click calendar event creation
+  - Auto-refresh expired tokens
+  - Due date reminders (1 day email + 1 hour popup)
+  - Color-coded events (red for payments)
+  - Direct link to view event in Google Calendar
 
-### 4. Trust Network Visualization
-Visualizes lending relationships with:
-- Force-directed D3.js graph
-- Node size = trust score
-- Edge thickness = loan volume
-- Color coding by loan status
-- Network metrics: centrality, clustering
+### 5. Trust Network Visualization
+- **Where**: `/network` page
+- **Features**:
+  - Force-directed D3.js graph
+  - Node size = trust score
+  - Edge thickness = loan volume
+  - Color coding by loan status
+  - Network metrics: centrality, clustering
 
-### 5. Fraud Detection
-Detects suspicious patterns:
-- Velocity abuse (too many loans quickly)
-- Amount anomalies (unusually large requests)
-- New account abuse
-- Dispute patterns
-- Circular lending
+### 6. Fraud Detection
+- **Where**: `/admin/fraud` (admin only)
+- **Detects**:
+  - Velocity abuse (too many loans quickly)
+  - Amount anomalies (unusually large requests)
+  - New account abuse
+  - Dispute patterns
+  - Circular lending
 
 ---
 
-## 🧪 Testing AI Services
+## 🧪 Using AI Features
 
-### From the Web Interface:
-1. Sign in to your account
-2. Navigate to **Settings** (http://localhost:3000/settings)
-3. Click the **"AI Services"** tab
-4. Test each service:
-   - **Contract Generation**: Click "Generate Sample Contract"
-   - **Email**: Enter your email and click "Send Test Email"
-   - **Voice Call**: Enter phone number and click "Initiate Test Call" (⚠️ Makes real call!)
-   - **Google Calendar**: Connect your calendar
+### AI Contract Generation (During Loan Creation)
+1. Go to "New Loan" page
+2. Search and select a borrower
+3. Click **"Generate with AI"** button
+4. Enter lender/borrower names and loan description
+5. Contract is generated and form auto-fills
+6. Review and submit the loan
 
-### From Your Code:
+### Google Calendar Export (From Loan Page)
+1. Go to any loan detail page
+2. Click **"Add to Calendar"** button
+3. If not connected, you'll be redirected to Google OAuth
+4. Approve calendar access
+5. Loan due date is added to your Google Calendar
+6. Click "View" in the success toast to see the event
+
+### View Automated Reminders
+1. Go to any loan detail page
+2. Scroll down to **"Automated Reminders"** card
+3. See all scheduled and sent email/voice reminders
+4. Track reminder status (Sent, Scheduled, Failed)
+
+### Connect Google Calendar (Settings)
+1. Go to Settings → Integrations
+2. Click **"Connect"** on Google Calendar
+3. Approve permissions on Google
+4. Once connected, export loans from loan pages
+
+### From Your Code (Client-Side API):
 ```typescript
 import {
   generateContract,
-  sendTestEmail,
-  testVoiceCall,
+  exportToCalendar,
   getEmailReminders,
   getVoiceReminders,
+  getCalendarStatus,
+  connectGoogleCalendar,
 } from "@/lib/client/api";
 
 // Generate contract
 const contract = await generateContract({
   lenderName: "Alice",
   borrowerName: "Bob",
-  amount: 1000,
-  purpose: "Emergency",
-  dueDate: "2026-02-15",
+  prompt: "$1000 for 6 months at 5% interest",
 });
 
-// Send test email
-await sendTestEmail("your@email.com", {
-  amount: 500,
-  dueDate: "2026-02-15",
+// Export to Google Calendar
+const result = await exportToCalendar("loan_id_here");
+console.log("Event created:", result.eventLink);
+
+// Get reminders for a loan
+const emailReminders = await getEmailReminders("loan_id_here");
+const voiceReminders = await getVoiceReminders("loan_id_here");
   borrowerName: "Test User",
 });
 ```
