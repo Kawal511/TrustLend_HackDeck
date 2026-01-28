@@ -33,6 +33,7 @@ export function LoanForm() {
     const [borrowerEmail, setBorrowerEmail] = useState("");
     const [borrowerInfo, setBorrowerInfo] = useState<BorrowerInfo | null>(null);
     const [amount, setAmount] = useState("");
+    const [interestRate, setInterestRate] = useState("0");
     const [dueDate, setDueDate] = useState("");
     const [purpose, setPurpose] = useState("");
     const [notes, setNotes] = useState("");
@@ -75,6 +76,7 @@ export function LoanForm() {
                 body: JSON.stringify({
                     borrowerEmail: borrowerInfo.email,
                     amount: parseFloat(amount),
+                    interestRate: parseFloat(interestRate) || 0,
                     dueDate: new Date(dueDate).toISOString(),
                     purpose: purpose || undefined,
                     notes: notes || undefined
@@ -199,13 +201,13 @@ export function LoanForm() {
                 <CardContent className="space-y-4">
                     {/* Amount */}
                     <div className="space-y-2">
-                        <Label htmlFor="amount">Amount ($)</Label>
+                        <Label htmlFor="amount">Principal Amount (₹)</Label>
                         <Input
                             id="amount"
                             type="number"
                             step="0.01"
                             min="1"
-                            max="10000"
+                            max="1000000"
                             placeholder="0.00"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
@@ -218,6 +220,44 @@ export function LoanForm() {
                             </p>
                         )}
                     </div>
+
+                    {/* Interest Rate */}
+                    <div className="space-y-2">
+                        <Label htmlFor="interestRate">Interest Rate (%)</Label>
+                        <Input
+                            id="interestRate"
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="100"
+                            placeholder="0"
+                            value={interestRate}
+                            onChange={(e) => setInterestRate(e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500">
+                            Set 0 for interest-free loan
+                        </p>
+                    </div>
+
+                    {/* Total with Interest Preview */}
+                    {amountNum > 0 && (
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                            <div className="flex justify-between items-center text-sm">
+                                <span className="text-gray-600">Principal:</span>
+                                <span className="font-medium">{formatCurrency(amountNum)}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm">
+                                <span className="text-gray-600">Interest ({parseFloat(interestRate) || 0}%):</span>
+                                <span className="font-medium">{formatCurrency(amountNum * (parseFloat(interestRate) || 0) / 100)}</span>
+                            </div>
+                            <div className="border-t border-purple-200 mt-2 pt-2 flex justify-between items-center">
+                                <span className="text-gray-700 font-medium">Total Repayment:</span>
+                                <span className="text-lg font-bold text-purple-700">
+                                    {formatCurrency(amountNum + (amountNum * (parseFloat(interestRate) || 0) / 100))}
+                                </span>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Due Date */}
                     <div className="space-y-2">
@@ -274,11 +314,11 @@ export function LoanForm() {
                 )}
             </Button>
             {(!borrowerInfo || !amount || !dueDate) && (
-                 <p className="text-sm text-center text-muted-foreground mt-2">
+                <p className="text-sm text-center text-muted-foreground mt-2">
                     {!borrowerInfo ? "Search for a borrower above" :
-                     !amount ? "Enter loan amount" :
-                     "Select a due date"}
-                 </p>
+                        !amount ? "Enter loan amount" :
+                            "Select a due date"}
+                </p>
             )}
         </form>
     );

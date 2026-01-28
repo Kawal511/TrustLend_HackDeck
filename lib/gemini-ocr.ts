@@ -29,9 +29,11 @@ export async function extractIncomeDataFromDocument(
       }
     };
 
+    console.log(`[OCR] Processing document type: ${documentType}, MimeType: ${mimeType}`);
     const result = await model.generateContent([prompt, imagePart]);
     const response = await result.response;
     const text = response.text();
+    console.log('[OCR] Raw Gemini Response:', text);
 
     // Parse JSON from response
     let extractedData;
@@ -39,8 +41,10 @@ export async function extractIncomeDataFromDocument(
       // Remove markdown code blocks if present
       const jsonText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       extractedData = JSON.parse(jsonText);
+      console.log('[OCR] Parsed JSON:', extractedData);
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
+      console.log('[OCR] Failed to parse text:', text);
       extractedData = { error: 'Failed to parse extracted data', rawResponse: text };
     }
 

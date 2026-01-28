@@ -4,11 +4,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Shield, CheckCircle, User } from 'lucide-react';
+import { Shield, CheckCircle, User, ArrowRight } from 'lucide-react';
 
 interface VerificationData {
     aadhaarNumber: string;
@@ -25,6 +26,8 @@ export default function BorrowerRegistrationPage() {
 
     const [step, setStep] = useState<'info' | 'verify' | 'complete'>('info');
     const [loading, setLoading] = useState(false);
+    const [checkingStatus, setCheckingStatus] = useState(true);
+    const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false);
     const [verificationData, setVerificationData] = useState<VerificationData | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -38,6 +41,25 @@ export default function BorrowerRegistrationPage() {
     });
 
     useEffect(() => {
+        // Check if user is already registered (has verification)
+        async function checkRegistrationStatus() {
+            try {
+                const res = await fetch('/api/borrowers/status');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.isRegistered && data.isVerified) {
+                        setIsAlreadyRegistered(true);
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking registration status:', error);
+            } finally {
+                setCheckingStatus(false);
+            }
+        }
+
+        checkRegistrationStatus();
+
         // Check if returning from DigiLocker
         const storedData = sessionStorage.getItem('digilocker_verification');
         const storedFormData = sessionStorage.getItem('borrower_form_data');
@@ -129,6 +151,57 @@ export default function BorrowerRegistrationPage() {
         }
         return 'bg-gray-300';
     };
+
+    // Show loading state
+    if (checkingStatus) {
+        return (
+            <div className="min-h-screen bg-gray-50 py-12 px-4 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Checking registration status...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Show already registered message
+    if (isAlreadyRegistered) {
+        return (
+            <div className="min-h-screen bg-gray-50 py-12 px-4">
+                <div className="max-w-md mx-auto">
+                    <Card className="border-green-200 bg-green-50">
+                        <CardHeader className="text-center pb-2">
+                            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                                <CheckCircle className="h-10 w-10 text-green-600" />
+                            </div>
+                            <CardTitle className="text-2xl text-green-800">Already Registered!</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-center space-y-4">
+                            <p className="text-green-700">
+                                You have already completed your borrower registration with Aadhaar verification.
+                            </p>
+                            <p className="text-sm text-green-600">
+                                Your verification is on file and you can now apply for loans from lenders.
+                            </p>
+                            <div className="pt-4 space-y-2">
+                                <Button asChild className="w-full">
+                                    <Link href="/borrowers">
+                                        Browse Available Loans
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Link>
+                                </Button>
+                                <Button asChild variant="outline" className="w-full">
+                                    <Link href="/">
+                                        Go to Dashboard
+                                    </Link>
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4">

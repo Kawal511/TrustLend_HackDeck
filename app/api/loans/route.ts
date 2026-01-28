@@ -72,13 +72,20 @@ export async function POST(req: Request) {
             }, { status: 400 });
         }
 
+        // Calculate total with interest
+        const interestRate = validated.interestRate || 0;
+        const interestAmount = (validated.amount * interestRate) / 100;
+        const totalWithInterest = validated.amount + interestAmount;
+
         // Create loan
         const loan = await prisma.loan.create({
             data: {
                 lenderId: userId,
                 borrowerId: borrower.id,
                 amount: validated.amount,
-                balance: validated.amount,
+                interestRate: interestRate,
+                totalWithInterest: totalWithInterest,
+                balance: totalWithInterest, // Balance includes interest
                 dueDate: new Date(validated.dueDate),
                 purpose: validated.purpose,
                 notes: validated.notes,

@@ -10,18 +10,22 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TrustBadge } from "@/components/trust/TrustBadge";
-import { RepaymentForm } from "@/components/loans/RepaymentForm";
 import { RepaymentHistory } from "@/components/loans/RepaymentHistory";
-import { ContractExportButton } from "@/components/loans/ContractExportButton";
 import { CalendarExportButton } from "@/components/loans/CalendarExportButton";
-import { RemindersDisplay } from "@/components/loans/RemindersDisplay";
-import { RaiseDisputeButton } from "@/components/loans/RaiseDisputeButton";
 import { DisputeChat } from "@/components/loans/DisputeChat";
 import InstallmentManager from "@/components/loans/InstallmentManager";
-import QRCodeDisplay from "@/components/loans/QRCodeDisplay";
+import LenderPaymentSetup from "@/components/loans/LenderPaymentSetup";
+import BorrowerPaymentQR from "@/components/loans/BorrowerPaymentQR";
 import BillGenerator from "@/components/loans/BillGenerator";
 import BlacklistWarning from "@/components/trust/BlacklistWarning";
 import { PendingLoanActions } from "@/components/loans/PendingLoanActions";
+
+import {
+    ClientRepaymentForm as RepaymentForm,
+    ClientContractExportButton as ContractExportButton,
+    ClientRemindersDisplay as RemindersDisplay,
+    ClientRaiseDisputeButton as RaiseDisputeButton
+} from "@/components/loans/ClientLoaders";
 import { formatCurrency, formatDate, getStatusColor, getDueDateStatus } from "@/lib/utils";
 import { ArrowLeft, Calendar, User, FileText, AlertCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -128,7 +132,7 @@ export default async function LoanDetailPage({
                             />
                             <ContractExportButton loan={serializedLoan} />
                             {canRecordPayment && (
-                                <RepaymentForm loanId={loan.id} maxAmount={loan.balance} />
+                                <RepaymentForm loanId={loan.id} maxAmount={loan.balance} isLender={isLender} />
                             )}
                         </div>
                     </div>
@@ -251,11 +255,29 @@ export default async function LoanDetailPage({
                 loanId={loan.id}
                 loanAmount={loan.amount}
                 hasInstallments={loan.hasInstallments}
+                isLender={isLender}
             />
 
-            {/* QR Code & Bills */}
+            {/* Payment Section - Different for Lender vs Borrower */}
             <div className="grid md:grid-cols-2 gap-6">
-                <QRCodeDisplay loanId={loan.id} existingQRCode={loan.qrCode} />
+                {isLender ? (
+                    <LenderPaymentSetup
+                        loanId={loan.id}
+                        loanAmount={loan.amount}
+                        balance={loan.balance}
+                        existingUpiId={loan.payeeUpiId}
+                        installments={loan.installments || []}
+                        repayments={loan.repayments || []}
+                    />
+                ) : (
+                    <BorrowerPaymentQR
+                        loanId={loan.id}
+                        loanAmount={loan.amount}
+                        payeeName={displayName}
+                        payeeUpiId={loan.payeeUpiId}
+                        installments={loan.installments || []}
+                    />
+                )}
                 <BillGenerator loanId={loan.id} />
             </div>
 

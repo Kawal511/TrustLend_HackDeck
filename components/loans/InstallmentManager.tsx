@@ -29,12 +29,14 @@ interface InstallmentManagerProps {
   loanId: string;
   loanAmount: number;
   hasInstallments: boolean;
+  isLender?: boolean;
 }
 
 export default function InstallmentManager({
   loanId,
   loanAmount,
   hasInstallments: initialHasInstallments,
+  isLender = false,
 }: InstallmentManagerProps) {
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [hasInstallments, setHasInstallments] = useState(initialHasInstallments);
@@ -193,7 +195,7 @@ export default function InstallmentManager({
                   <div className="font-semibold">₹{installment.amount.toFixed(2)}</div>
                   {getStatusBadge(installment.status)}
                 </div>
-                {installment.status !== 'PAID' && (
+                {installment.status !== 'PAID' && !isLender && (
                   <Dialog
                     open={selectedInstallment === installment.id}
                     onOpenChange={(open) =>

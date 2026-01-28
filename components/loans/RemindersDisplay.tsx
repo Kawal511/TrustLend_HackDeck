@@ -55,7 +55,8 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
       return;
     }
 
-    // Resend test mode only allows sending to atharva.deo03@svkmmumbai.onmicrosoft.com
+    /* 
+    // Resend test mode restriction removed
     const allowedEmail = "atharva.deo03@svkmmumbai.onmicrosoft.com";
     if (emailTo.toLowerCase() !== allowedEmail.toLowerCase()) {
       toast.error("Email restriction", {
@@ -63,6 +64,7 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
       });
       return;
     }
+    */
 
     setSendingEmail(true);
     try {
@@ -92,7 +94,7 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
 
     // Clean and format phone number (remove spaces, dashes, etc.)
     const cleanedPhone = phoneNumber.replace(/[\s\-\(\)]/g, '');
-    
+
     // Ensure it starts with +
     const formattedPhone = cleanedPhone.startsWith('+') ? cleanedPhone : `+${cleanedPhone}`;
 
@@ -113,7 +115,7 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
       }
 
       const data = await response.json();
-      
+
       if (data.callId) {
         toast.success("Voice call initiated!", {
           description: `Call ID: ${data.callId} - Status: ${data.status || 'queued'}`
@@ -123,7 +125,7 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
           description: data.message || "Call has been queued"
         });
       }
-      
+
       setCallDialogOpen(false);
       setPhoneNumber("");
       loadReminders();
@@ -149,11 +151,13 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
     );
   }
 
+  /* 
+  // Always show the component so users can send reminders
   const hasReminders = emailReminders.length > 0 || voiceReminders.length > 0;
-
   if (!hasReminders) {
     return null;
   }
+  */
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -197,7 +201,7 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
                 <div className="space-y-4 pt-4">
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
                     <p className="text-xs text-amber-800">
-                      <strong>Note:</strong> In test mode, emails can only be sent to <strong>atharva.deo03@svkmmumbai.onmicrosoft.com</strong>. To send to other addresses, verify a domain at resend.com/domains.
+                      <strong>Note:</strong> Emails will be sent via Resend. Ensure the recipient email is valid.
                     </p>
                   </div>
                   <div className="space-y-2">
@@ -205,7 +209,7 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
                     <Input
                       id="emailTo"
                       type="email"
-                      placeholder="atharva.deo03@svkmmumbai.onmicrosoft.com"
+                      placeholder="borrower@example.com"
                       value={emailTo}
                       onChange={(e) => setEmailTo(e.target.value)}
                       disabled={sendingEmail}

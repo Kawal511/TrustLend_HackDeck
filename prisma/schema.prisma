@@ -37,6 +37,7 @@ model User {
   trustScoreHistory     TrustScoreHistory[]
   verification          Verification?
   documents             Document[]
+  fraudAlerts           FraudAlert[]
 }
 
 model Loan {
@@ -44,6 +45,8 @@ model Loan {
   lenderId          String
   borrowerId        String
   amount            Float
+  interestRate      Float             @default(0)
+  totalWithInterest Float?
   balance           Float
   currency          String            @default("USD")
   purpose           String?
@@ -52,6 +55,7 @@ model Loan {
   status            String
   hasInstallments   Boolean           @default(false)
   qrCode            String?
+  payeeUpiId        String?
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   completedAt       DateTime?
@@ -240,6 +244,22 @@ model Blacklist {
   updatedAt  DateTime  @updatedAt
 
   @@index([userId, isActive])
+}
+
+model FraudAlert {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  alertType      String
+  severity       String   // low, medium, high, critical
+  suspicionScore Int
+  redFlags       String   // JSON string of RedFlag[]
+  details        String   // JSON string of details
+  actionTaken    String?  // reviewed, blocked, dismissed
+  createdAt      DateTime @default(now())
+
+  @@index([userId, severity])
+  @@index([createdAt])
 }
 
 model Bill {

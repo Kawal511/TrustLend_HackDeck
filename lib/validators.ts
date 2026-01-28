@@ -5,7 +5,8 @@ import { z } from "zod";
 // Create Loan Schema
 export const createLoanSchema = z.object({
     borrowerEmail: z.string().email("Invalid email address"),
-    amount: z.number().positive("Amount must be positive").max(10000, "Maximum loan amount is $10,000"),
+    amount: z.number().positive("Amount must be positive").max(1000000, "Maximum loan amount is ₹10,00,000"),
+    interestRate: z.number().min(0, "Interest rate cannot be negative").max(100, "Interest rate cannot exceed 100%").default(0),
     dueDate: z.string().datetime("Invalid date format"),
     purpose: z.string().max(200, "Purpose must be 200 characters or less").optional(),
     notes: z.string().max(500, "Notes must be 500 characters or less").optional()
@@ -31,7 +32,8 @@ export type ConfirmRepaymentInput = z.infer<typeof confirmRepaymentSchema>;
 // Update Loan Schema
 export const updateLoanSchema = z.object({
     status: z.enum(["ACTIVE", "COMPLETED", "OVERDUE", "DISPUTED", "CANCELLED"]).optional(),
-    notes: z.string().max(500).optional()
+    notes: z.string().max(500).optional(),
+    payeeUpiId: z.string().max(100).optional()
 });
 
 export type UpdateLoanInput = z.infer<typeof updateLoanSchema>;

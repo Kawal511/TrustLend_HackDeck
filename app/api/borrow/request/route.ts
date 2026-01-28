@@ -4,6 +4,8 @@ import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
+import { checkAndFlagFraud } from "@/lib/server/fraud-actions";
+
 export async function POST(req: Request) {
     try {
         const { userId } = await auth();
@@ -13,6 +15,15 @@ export async function POST(req: Request) {
 
         const body = await req.json();
         const { amount, purpose, description, lenderId, dueDate, urgency, borrowerId } = body;
+
+        // Check for fraud before proceeding
+        const fraudResult = await checkAndFlagFraud(userId, amount);
+
+        if (fraudResult?.action === 'blocked') {
+            return NextResponse.json({
+                error: 'Your account has been flagged for suspicious activity and cannot submit loan requests at this time. Please contact support.'
+            }, { status: 403 });
+        }
 
         // Validate required fields
         if (!amount || !purpose || !dueDate) {

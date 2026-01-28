@@ -23,9 +23,10 @@ import { formatCurrency } from "@/lib/utils";
 interface RepaymentFormProps {
     loanId: string;
     maxAmount: number;
+    isLender?: boolean;
 }
 
-export function RepaymentForm({ loanId, maxAmount }: RepaymentFormProps) {
+export function RepaymentForm({ loanId, maxAmount, isLender = false }: RepaymentFormProps) {
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -79,14 +80,19 @@ export function RepaymentForm({ loanId, maxAmount }: RepaymentFormProps) {
             <DialogTrigger asChild>
                 <Button className="gap-2">
                     <DollarSign className="h-4 w-4" />
-                    Record Payment
+                    {isLender ? "Record Received" : "Record Payment"}
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Record a Payment</DialogTitle>
+                    <DialogTitle>
+                        {isLender ? "Record Received Payment" : "Record a Payment"}
+                    </DialogTitle>
                     <DialogDescription>
-                        Enter the amount that was paid. The other party will need to confirm this payment.
+                        {isLender
+                            ? "Enter the amount you received from the borrower. They will need to confirm this."
+                            : "Enter the amount that was paid. The lender will need to confirm this payment."
+                        }
                     </DialogDescription>
                 </DialogHeader>
 

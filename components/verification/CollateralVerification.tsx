@@ -98,10 +98,10 @@ function CryptoWalletForm({ onSuccess }: { onSuccess: () => void }) {
             blockchain === 'ETHEREUM'
               ? '0x...'
               : blockchain === 'BITCOIN'
-              ? '1...'
-              : blockchain === 'SOLANA'
-              ? 'Base58 address'
-              : 'Wallet address'
+                ? '1...'
+                : blockchain === 'SOLANA'
+                  ? 'Base58 address'
+                  : 'Wallet address'
           }
         />
       </div>
@@ -135,14 +135,19 @@ function AssetDocumentUpload({ onSuccess }: { onSuccess: () => void }) {
   const [collateralType, setCollateralType] = useState('PROPERTY');
   const [value, setValue] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [extractedInfo, setExtractedInfo] = useState<any>(null);
 
   async function handleUpload(file: File) {
     setUploading(true);
+    setExtractedInfo(null);
     try {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('collateralType', collateralType);
-      formData.append('collateralValue', value);
+
+      // If user hasn't typed a value yet, we might get it from OCR
+      if (value) formData.append('collateralValue', value);
+      else formData.append('collateralValue', '0'); // Placeholder, will update later
 
       const res = await fetch('/api/verification/collateral/upload', {
         method: 'POST',
@@ -153,6 +158,13 @@ function AssetDocumentUpload({ onSuccess }: { onSuccess: () => void }) {
 
       if (res.ok) {
         toast.success('Collateral Added', { description: data.message });
+        setExtractedInfo(data.extractedData);
+
+        // Auto-fill value if extracted
+        if (data.extractedData?.estimatedValue) {
+          setValue(data.extractedData.estimatedValue.toString());
+        }
+
         onSuccess();
       } else {
         toast.error('Error', { description: data.error });
@@ -196,7 +208,7 @@ function AssetDocumentUpload({ onSuccess }: { onSuccess: () => void }) {
         <Input
           type="file"
           accept=".pdf,.jpg,.jpeg,.png"
-          disabled={uploading || !value}
+          disabled={uploading}
           onChange={e => {
             const file = e.target.files?.[0];
             if (file) handleUpload(file);
@@ -206,6 +218,21 @@ function AssetDocumentUpload({ onSuccess }: { onSuccess: () => void }) {
           Upload property deed, vehicle registration, or other proof
         </p>
       </div>
+
+      {extractedInfo && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm">
+          <h5 className="font-semibold text-blue-900 mb-1">OCR Extracted Details:</h5>
+          <ul className="list-disc list-inside text-blue-800 space-y-1">
+            {extractedInfo.ownerName && <li><strong>Owner:</strong> {extractedInfo.ownerName}</li>}
+            {extractedInfo.propertyType && <li><strong>Type:</strong> {extractedInfo.propertyType}</li>}
+            {extractedInfo.area && <li><strong>Area:</strong> {extractedInfo.area}</li>}
+            {extractedInfo.registrationNumber && <li><strong>Reg No:</strong> {extractedInfo.registrationNumber}</li>}
+            {extractedInfo.vehicleNumber && <li><strong>Vehicle No:</strong> {extractedInfo.vehicleNumber}</li>}
+            {extractedInfo.manufacturer && <li><strong>Make:</strong> {extractedInfo.manufacturer}</li>}
+            {extractedInfo.estimatedValue && <li><strong>Est. Value:</strong> {extractedInfo.estimatedValue}</li>}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

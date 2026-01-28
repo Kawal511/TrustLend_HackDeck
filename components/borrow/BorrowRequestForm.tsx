@@ -134,6 +134,23 @@ export function BorrowRequestForm({ userId, lenders }: BorrowRequestFormProps) {
                 </div>
             </div>
 
+            {/* Interest Rate Info */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-blue-600 font-bold text-sm">%</span>
+                    </div>
+                    <div>
+                        <p className="font-medium text-blue-800">About Interest Rates</p>
+                        <p className="text-sm text-blue-700 mt-1">
+                            Interest rates will be decided by the lender upon approval.
+                            You can negotiate the rate before accepting the loan offer.
+                            The final amount will be shown when the lender approves your request.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <div>
                 <Label htmlFor="lender">Select Lender (Optional)</Label>
                 <Select

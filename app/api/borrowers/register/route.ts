@@ -152,17 +152,27 @@ export async function POST(req: Request) {
                 });
             }
 
-            // Create trust score history entry
-            await prisma.trustScoreHistory.create({
-                data: {
+            // Check if registration bonus already given (prevent duplicate)
+            const existingRegistrationBonus = await prisma.trustScoreHistory.findFirst({
+                where: {
                     userId: user.id,
-                    event: 'REGISTRATION',
-                    change: 50,
-                    previousScore: 0,
-                    newScore: 50,
-                    description: 'Initial registration with Aadhaar verification via DigiLocker'
+                    event: 'REGISTRATION'
                 }
             });
+
+            // Only create trust score history if no registration bonus exists
+            if (!existingRegistrationBonus) {
+                await prisma.trustScoreHistory.create({
+                    data: {
+                        userId: user.id,
+                        event: 'REGISTRATION',
+                        change: 50,
+                        previousScore: 0,
+                        newScore: 50,
+                        description: 'Initial registration with Aadhaar verification via DigiLocker'
+                    }
+                });
+            }
         }
 
         return NextResponse.json({

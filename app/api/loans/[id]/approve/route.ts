@@ -47,17 +47,24 @@ export async function POST(
         }
 
         if (action === 'approve') {
-            // Approve the loan - change status to ACTIVE
+            const interestRate = body.interestRate || 0;
+            const interestAmount = (loan.amount * interestRate) / 100;
+            const totalWithInterest = loan.amount + interestAmount;
+
+            // Approve the loan - change status to ACTIVE and set interest
             const updatedLoan = await prisma.loan.update({
                 where: { id },
                 data: {
-                    status: 'ACTIVE'
+                    status: 'ACTIVE',
+                    interestRate: interestRate,
+                    totalWithInterest: totalWithInterest,
+                    balance: totalWithInterest
                 }
             });
 
             return NextResponse.json({
                 success: true,
-                message: 'Loan request approved! The loan is now active.',
+                message: `Loan approved with ${interestRate}% interest! Total repayment: ₹${totalWithInterest.toLocaleString()}`,
                 loan: updatedLoan
             });
         } else if (action === 'reject') {

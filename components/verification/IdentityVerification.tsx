@@ -122,15 +122,51 @@ export function IdentityVerification({ onSuccess }: { onSuccess: () => void }) {
               idType === 'AADHAAR'
                 ? '123456789012'
                 : idType === 'PAN'
-                ? 'ABCDE1234F'
-                : 'Enter ID number'
+                  ? 'ABCDE1234F'
+                  : 'Enter ID number'
             }
           />
-          <p className="text-xs text-gray-500 mt-1">
-            {idType === 'AADHAAR' && 'Format: 12 digits (e.g., 123456789012)'}
-            {idType === 'PAN' && 'Format: 5 letters + 4 digits + 1 letter (e.g., ABCDE1234F)'}
-            {idType === 'PASSPORT' && 'Format: 1 letter + 7 digits (e.g., A1234567)'}
-          </p>
+        </div>
+
+        <div>
+          <Label>Upload ID Document</Label>
+          <Input
+            type="file"
+            accept=".jpg,.jpeg,.png,.pdf"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+
+              setLoading(true);
+              const formData = new FormData();
+              formData.append('file', file);
+              formData.append('idType', idType);
+
+              try {
+                const res = await fetch('/api/verification/identity/upload', {
+                  method: 'POST',
+                  body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                  toast.success('ID Uploaded', { description: 'Data extracted successfully' });
+                  // If OCR extracted ID Number, auto-fill it
+                  if (data.extractedData?.aadhaarNumber) setIdNumber(data.extractedData.aadhaarNumber.replace(/\s/g, ''));
+                  if (data.extractedData?.panNumber) setIdNumber(data.extractedData.panNumber);
+
+                  // Show extracted info toast/alert
+                  toast.info("Extracted Data", {
+                    description: `Name: ${data.extractedData?.name || 'N/A'}, Address: ${data.extractedData?.address || 'N/A'}`
+                  });
+                }
+              } catch (err) {
+                toast.error("Upload Failed");
+              } finally {
+                setLoading(false);
+              }
+            }}
+          />
+          <p className="text-xs text-gray-500 mt-1">Upload front side of your ID card for auto-extraction.</p>
         </div>
 
         <Button onClick={handleSubmitId} disabled={loading || !idNumber} className="w-full">
