@@ -20,6 +20,9 @@ model User {
   voiceRemindersEnabled Boolean             @default(false)
   isSearchable          Boolean             @default(true)
   isBlacklisted         Boolean             @default(false)
+  isIdVerified          Boolean             @default(false)
+  isIncomeVerified      Boolean             @default(false)
+  hasCollateral         Boolean             @default(false)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   disputeMessages       DisputeMessage[]
@@ -32,6 +35,8 @@ model User {
   blacklistEntry        Blacklist?
   blacklistReports      Blacklist[]         @relation("ReportedBy")
   trustScoreHistory     TrustScoreHistory[]
+  verification          Verification?
+  documents             Document[]
 }
 
 model Loan {
@@ -251,4 +256,78 @@ model Bill {
   status      String
 
   @@index([loanId, status])
+}
+
+model Verification {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  
+  // Identity Verification
+  idType      String?
+  idNumber    String?
+  idDocument  String?
+  idVerified  Boolean  @default(false)
+  idVerifiedAt DateTime?
+  
+  // Income Verification
+  incomeType  String?
+  incomeBracket String?
+  annualIncome Float?
+  
+  salarySlips   String?
+  itrDocuments  String?
+  bankStatements String?
+  
+  incomeVerified Boolean @default(false)
+  incomeVerifiedAt DateTime?
+  
+  // Collateral
+  collateralType String?
+  collateralValue Float?
+  collateralDocuments String?
+  
+  cryptoWalletAddress String?
+  cryptoWalletBalance Float?
+  cryptoWalletProof   String?
+  
+  // Overall Status
+  verificationScore Int @default(0)
+  isFullyVerified  Boolean @default(false)
+  
+  // Metadata
+  extractedData String?
+  verificationNotes String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId, isFullyVerified])
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  category    String
+  type        String
+  
+  filename    String
+  fileUrl     String
+  fileType    String
+  fileSize    Int
+  
+  // OCR Data
+  extractedData String?
+  ocrProcessed  Boolean @default(false)
+  
+  // Verification
+  isVerified    Boolean @default(false)
+  verifiedBy    String?
+  verifiedAt    DateTime?
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([userId, category])
 }

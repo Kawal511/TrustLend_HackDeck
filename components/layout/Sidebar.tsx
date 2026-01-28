@@ -38,6 +38,11 @@ const mainNavItems = [
         title: "Trust Score",
         href: "/profile",
         icon: TrendingUp
+    },
+    {
+        title: "Verification",
+        href: "/verification",
+        icon: Shield
     }
 ];
 
