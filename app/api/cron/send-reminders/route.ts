@@ -38,7 +38,7 @@ export async function GET(req: Request) {
       const emailContent = generateEmailContent(reminder.type, reminder.loan);
       
       await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL!,
+        from: "TrustLend <onboarding@resend.dev>",
         to: reminder.loan.borrower.email,
         subject: emailContent.subject,
         html: emailContent.html

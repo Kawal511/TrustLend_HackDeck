@@ -52,7 +52,7 @@ async function testEmail() {
     `;
 
     const { data, error } = await resend.emails.send({
-      from: "onboarding@resend.dev", // Using Resend sandbox for testing
+      from: "TrustLend <onboarding@resend.dev>",
       to: ["atharva.deo03@svkmmumbai.onmicrosoft.com"], // Must be account owner email in test mode
       subject: "🎉 TrustLend Terminal Test - Email Service [TO: atharvavdeo75@gmail.com]",
       html: htmlContent,
@@ -107,14 +107,14 @@ async function testVoiceCall() {
     );
 
     console.log("✅ Voice call initiated successfully!");
-    console.log("   📞 To: +917002147035");
+    console.log("   📞 To: +917002147035 (7002147035)");
     console.log("   🆔 Call ID:", response.data.call_id);
     console.log("   📊 Status:", response.data.status);
   } catch (error: any) {
     if (error.response) {
       console.error("❌ Bolna API error:", error.response.data);
       console.log("\n⚠️  NOTE: Trial accounts can only make calls to verified phone numbers.");
-      console.log("   To call +917002147035, verify the number in your Bolna dashboard");
+      console.log("   To call +917002147035 (7002147035), verify the number in your Bolna dashboard");
       console.log("   or upgrade to a paid account.");
     } else {
       console.error("❌ Error initiating call:", error.message);

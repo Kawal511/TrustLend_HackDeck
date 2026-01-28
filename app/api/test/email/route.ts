@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     `;
 
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
+      from: "TrustLend <onboarding@resend.dev>",
       to: [email],
       subject: "🎉 TrustLend Email Test",
       html: htmlContent,
