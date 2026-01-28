@@ -55,6 +55,15 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
       return;
     }
 
+    // Resend test mode only allows sending to atharva.deo03@svkmmumbai.onmicrosoft.com
+    const allowedEmail = "atharva.deo03@svkmmumbai.onmicrosoft.com";
+    if (emailTo.toLowerCase() !== allowedEmail.toLowerCase()) {
+      toast.error("Email restriction", {
+        description: `In test mode, emails can only be sent to ${allowedEmail}. Please verify a domain at resend.com/domains for other recipients.`,
+      });
+      return;
+    }
+
     setSendingEmail(true);
     try {
       await sendTestEmail(emailTo, {
@@ -83,21 +92,29 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
 
     setSchedulingCall(true);
     try {
-      // Schedule call for 5 minutes from now
-      const scheduledFor = new Date();
-      scheduledFor.setMinutes(scheduledFor.getMinutes() + 5);
-      
-      await scheduleVoiceReminder({
-        loanId,
-        phoneNumber,
-        scheduledFor: scheduledFor.toISOString()
+      // Use test voice API for immediate call
+      const response = await fetch("/api/test/voice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber }),
       });
-      toast.success("Voice call scheduled for " + scheduledFor.toLocaleTimeString());
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to initiate call");
+      }
+
+      const data = await response.json();
+      toast.success("Voice call initiated!", {
+        description: `Call ID: ${data.callId}`
+      });
       setCallDialogOpen(false);
       setPhoneNumber("");
       loadReminders();
     } catch (error: any) {
-      toast.error("Failed to schedule call", {
+      toast.error("Failed to initiate call", {
         description: error.message,
       });
     } finally {
@@ -164,12 +181,17 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+                    <p className="text-xs text-amber-800">
+                      <strong>Note:</strong> In test mode, emails can only be sent to <strong>atharva.deo03@svkmmumbai.onmicrosoft.com</strong>. To send to other addresses, verify a domain at resend.com/domains.
+                    </p>
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="emailTo">Recipient Email</Label>
                     <Input
                       id="emailTo"
                       type="email"
-                      placeholder="user@example.com"
+                      placeholder="atharva.deo03@svkmmumbai.onmicrosoft.com"
                       value={emailTo}
                       onChange={(e) => setEmailTo(e.target.value)}
                       disabled={sendingEmail}
@@ -233,14 +255,14 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
                   <Phone className="h-4 w-4" />
-                  Schedule Call
+                  Place Call
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Schedule Voice Reminder</DialogTitle>
+                  <DialogTitle>Place Voice Call</DialogTitle>
                   <DialogDescription>
-                    Schedule an AI-powered voice call reminder
+                    Place an immediate AI-powered voice call reminder
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
@@ -275,12 +297,12 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
                       {schedulingCall ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          Scheduling...
+                          Calling...
                         </>
                       ) : (
                         <>
                           <Phone className="h-4 w-4" />
-                          Schedule Call
+                          Place Call
                         </>
                       )}
                     </Button>
