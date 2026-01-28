@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrustGauge } from "@/components/trust/TrustGauge";
+import TrustScoreTimeline from "@/components/trust/TrustScoreTimeline";
 import { Separator } from "@/components/ui/separator";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import { TrendingUp, TrendingDown, Minus, Award, Wallet } from "lucide-react";
@@ -143,10 +144,13 @@ export default async function ProfilePage() {
                 </Card>
             </div>
 
-            {/* Trust History */}
+            {/* Trust History Timeline */}
+            <TrustScoreTimeline />
+
+            {/* Trust History (Old) */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Trust Score History</CardTitle>
+                    <CardTitle>Legacy Trust Score History</CardTitle>
                 </CardHeader>
                 <CardContent>
                     {trustHistory.length > 0 ? (
