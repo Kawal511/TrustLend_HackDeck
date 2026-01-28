@@ -94,7 +94,7 @@ Keep it under 100 words.`;
 
             const completion = await groq.chat.completions.create({
                 messages: [{ role: "user", content: aiPrompt }],
-                model: "llama-3.1-70b-versatile",
+                model: "llama-3.3-70b-versatile",
                 temperature: 0.7,
                 max_tokens: 250
             });

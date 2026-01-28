@@ -46,7 +46,7 @@ function getGroqClient(): Groq | null {
     return new Groq({ apiKey });
 }
 
-// Parse natural language using Groq (llama-3.1-8b-instant - smaller model)
+// Parse natural language using Groq (llama-3.3-70b-versatile)
 async function parseWithAI(input: string): Promise<ParsedTerms> {
     const groq = getGroqClient();
 
@@ -57,7 +57,7 @@ async function parseWithAI(input: string): Promise<ParsedTerms> {
 
     try {
         const response = await groq.chat.completions.create({
-            model: "llama-3.1-8b-instant", // Using smaller model as requested
+            model: "llama-3.3-70b-versatile", // Using current Groq model
             messages: [
                 {
                     role: "system",

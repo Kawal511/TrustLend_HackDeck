@@ -144,7 +144,7 @@ Keep your response professional, empathetic, and solution-focused. Aim for 150-2
 
         const completion = await groq.chat.completions.create({
             messages: [{ role: "user", content: aiPrompt }],
-            model: "llama-3.1-70b-versatile",
+            model: "llama-3.3-70b-versatile",
             temperature: 0.7,
             max_tokens: 500
         });
