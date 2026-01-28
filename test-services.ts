@@ -88,7 +88,7 @@ async function testVoiceCall() {
       "https://api.bolna.dev/call",
       {
         agent_id: BOLNA_AGENT_ID,
-        recipient_phone_number: "+917002147035",
+        recipient_phone_number: "+917021470357",
         from: process.env.BOLNA_PHONE_NUMBER || "+14155238886",
         metadata: {
           loanAmount: 5000,
@@ -107,14 +107,14 @@ async function testVoiceCall() {
     );
 
     console.log("✅ Voice call initiated successfully!");
-    console.log("   📞 To: +917002147035 (7002147035)");
+    console.log("   📞 To: +917021470357 (7021470357)");
     console.log("   🆔 Call ID:", response.data.call_id);
     console.log("   📊 Status:", response.data.status);
   } catch (error: any) {
     if (error.response) {
       console.error("❌ Bolna API error:", error.response.data);
       console.log("\n⚠️  NOTE: Trial accounts can only make calls to verified phone numbers.");
-      console.log("   To call +917002147035 (7002147035), verify the number in your Bolna dashboard");
+      console.log("   To call +917021470357 (7021470357), verify the number in your Bolna dashboard");
       console.log("   or upgrade to a paid account.");
     } else {
       console.error("❌ Error initiating call:", error.message);

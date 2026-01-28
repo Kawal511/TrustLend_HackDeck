@@ -8,7 +8,7 @@ async function main() {
   const dummyBorrower = await prisma.user.upsert({
     where: { email: 'atharvavdeo75@gmail.com' },
     update: {
-      phoneNumber: '+917002147035',
+      phoneNumber: '+917021470357',
       voiceRemindersEnabled: true,
     },
     create: {
@@ -17,7 +17,7 @@ async function main() {
       firstName: 'Atharva',
       lastName: 'Deo',
       username: 'atharvadeo',
-      phoneNumber: '+917002147035',
+      phoneNumber: '+917021470357',
       voiceRemindersEnabled: true,
       trustScore: 100,
     },
