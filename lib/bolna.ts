@@ -19,20 +19,28 @@ export async function initiateBolnaCall(params: BolnaCallParams) {
       throw new Error('BOLNA_AGENT_ID not configured');
     }
 
+    if (!process.env.BOLNA_API_KEY) {
+      throw new Error('BOLNA_API_KEY not configured');
+    }
+
+    const requestBody = {
+      agent_id: agentId,
+      recipient_phone_number: params.phoneNumber,
+      metadata: {
+        loanId: params.loanId,
+        borrowerName: params.borrowerName,
+        lenderName: params.lenderName,
+        amount: params.loanAmount,
+        dueDate: params.dueDate
+      },
+      webhook_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/bolna`
+    };
+
+    console.log('Bolna API Request:', JSON.stringify(requestBody, null, 2));
+
     const response = await axios.post(
       'https://api.bolna.dev/call',
-      {
-        agent_id: agentId,
-        recipient_phone_number: params.phoneNumber,
-        metadata: {
-          loanId: params.loanId,
-          borrowerName: params.borrowerName,
-          lenderName: params.lenderName,
-          amount: params.loanAmount,
-          dueDate: params.dueDate
-        },
-        webhook_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/bolna`
-      },
+      requestBody,
       {
         headers: {
           'Authorization': `Bearer ${process.env.BOLNA_API_KEY}`,
@@ -41,6 +49,8 @@ export async function initiateBolnaCall(params: BolnaCallParams) {
       }
     );
 
+    console.log('Bolna API Response:', response.data);
+
     return {
       success: true,
       call_id: response.data.call_id,
@@ -48,7 +58,11 @@ export async function initiateBolnaCall(params: BolnaCallParams) {
     };
     
   } catch (error: any) {
-    console.error('Bolna call failed:', error.response?.data || error.message);
+    console.error('Bolna call failed:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
     throw new Error(error.response?.data?.message || error.message || 'Failed to initiate call');
   }
 }
