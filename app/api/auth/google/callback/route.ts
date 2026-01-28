@@ -61,7 +61,7 @@ export async function GET(req: Request) {
         refreshToken: tokens.refresh_token || undefined,
         expiresAt: tokens.expires_in
           ? new Date(Date.now() + tokens.expires_in * 1000)
-          : undefined,
+          : new Date(),
       },
       create: {
         userId,
@@ -70,7 +70,7 @@ export async function GET(req: Request) {
         refreshToken: tokens.refresh_token,
         expiresAt: tokens.expires_in
           ? new Date(Date.now() + tokens.expires_in * 1000)
-          : undefined,
+          : new Date(),
       },
     });
 
