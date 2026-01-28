@@ -61,12 +61,34 @@ export async function GET() {
                 ? `${otherParty.firstName} ${otherParty.lastName}`
                 : otherParty.email;
 
-            if (isLender) {
+            // Pending loan request - show to lender
+            if (loan.status === 'PENDING' && isLender) {
+                notifications.push({
+                    id: `pending_${loan.id}`,
+                    type: "loan_request" as const,
+                    title: "🔔 New Loan Request",
+                    message: `${otherName} is requesting ₹${loan.amount.toLocaleString()} - Review and approve`,
+                    read: false,
+                    createdAt: loan.createdAt,
+                    link: `/loans/${loan.id}`
+                });
+            } else if (loan.status === 'PENDING' && !isLender) {
+                // Show pending status to borrower
+                notifications.push({
+                    id: `pending_borrower_${loan.id}`,
+                    type: "loan_request" as const,
+                    title: "Request Pending",
+                    message: `Your ₹${loan.amount.toLocaleString()} loan request to ${otherName} is pending approval`,
+                    read: false,
+                    createdAt: loan.createdAt,
+                    link: `/borrow`
+                });
+            } else if (isLender) {
                 notifications.push({
                     id: `loan_${loan.id}`,
                     type: "loan_request" as const,
                     title: "New Loan Created",
-                    message: `You lent $${loan.amount} to ${otherName}`,
+                    message: `You lent ₹${loan.amount.toLocaleString()} to ${otherName}`,
                     read: false,
                     createdAt: loan.createdAt,
                     link: `/loans/${loan.id}`
@@ -76,7 +98,7 @@ export async function GET() {
                     id: `loan_${loan.id}`,
                     type: "loan_request" as const,
                     title: "Loan Received",
-                    message: `${otherName} lent you $${loan.amount}`,
+                    message: `${otherName} lent you ₹${loan.amount.toLocaleString()}`,
                     read: false,
                     createdAt: loan.createdAt,
                     link: `/loans/${loan.id}`

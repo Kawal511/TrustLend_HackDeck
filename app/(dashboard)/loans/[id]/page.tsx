@@ -21,6 +21,7 @@ import InstallmentManager from "@/components/loans/InstallmentManager";
 import QRCodeDisplay from "@/components/loans/QRCodeDisplay";
 import BillGenerator from "@/components/loans/BillGenerator";
 import BlacklistWarning from "@/components/trust/BlacklistWarning";
+import { PendingLoanActions } from "@/components/loans/PendingLoanActions";
 import { formatCurrency, formatDate, getStatusColor, getDueDateStatus } from "@/lib/utils";
 import { ArrowLeft, Calendar, User, FileText, AlertCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -42,7 +43,7 @@ async function getLoan(loanId: string) {
 
 async function checkBlacklist(userId: string) {
     return await prisma.blacklist.findFirst({
-        where: { 
+        where: {
             userId,
             isActive: true
         }
@@ -91,6 +92,15 @@ export default async function LoanDetailPage({
                 </Link>
             </Button>
 
+            {/* Pending Loan Actions - For lenders with pending requests */}
+            {loan.status === 'PENDING' && isLender && (
+                <PendingLoanActions
+                    loanId={loan.id}
+                    borrowerName={displayName}
+                    amount={loan.amount}
+                />
+            )}
+
             {/* Header Card */}
             <Card>
                 <CardHeader>
@@ -107,14 +117,14 @@ export default async function LoanDetailPage({
                             </p>
                         </div>
                         <div className="flex gap-2 flex-wrap">
-                            <RaiseDisputeButton 
-                                loanId={loan.id} 
+                            <RaiseDisputeButton
+                                loanId={loan.id}
                                 hasExistingDispute={!!loan.disputeThread}
                             />
-                            <CalendarExportButton 
-                                loanId={loan.id} 
-                                loanAmount={loan.amount} 
-                                dueDate={loan.dueDate} 
+                            <CalendarExportButton
+                                loanId={loan.id}
+                                loanAmount={loan.amount}
+                                dueDate={loan.dueDate}
                             />
                             <ContractExportButton loan={serializedLoan} />
                             {canRecordPayment && (
@@ -230,14 +240,14 @@ export default async function LoanDetailPage({
 
             {/* Dispute Resolution */}
             {loan.disputeThread && (
-                <DisputeChat 
+                <DisputeChat
                     loanId={loan.id}
                     currentUserId={userId}
                 />
             )}
 
             {/* Installment Manager */}
-            <InstallmentManager 
+            <InstallmentManager
                 loanId={loan.id}
                 loanAmount={loan.amount}
                 hasInstallments={loan.hasInstallments}
@@ -250,7 +260,7 @@ export default async function LoanDetailPage({
             </div>
 
             {/* Automated Reminders */}
-            <RemindersDisplay 
+            <RemindersDisplay
                 loanId={loan.id}
                 borrowerEmail={loan.borrower.email}
                 lenderEmail={loan.lender.email}

@@ -60,18 +60,38 @@ export default async function DashboardPage() {
         const clerkUser = await currentUser();
 
         if (clerkUser) {
-            // Create user in database
-            await prisma.user.create({
-                data: {
-                    id: userId,
-                    email: clerkUser.emailAddresses[0]?.emailAddress || "",
-                    firstName: clerkUser.firstName,
-                    lastName: clerkUser.lastName,
-                    imageUrl: clerkUser.imageUrl,
-                    username: clerkUser.username,
-                    trustScore: 100
-                }
-            });
+            // Create or update user in database (upsert handles email conflicts)
+            const email = clerkUser.emailAddresses[0]?.emailAddress || "";
+
+            // First try to find by email and update the ID if needed
+            const existingByEmail = await prisma.user.findUnique({ where: { email } });
+
+            if (existingByEmail && existingByEmail.id !== userId) {
+                // Email exists with different ID - update the existing record
+                await prisma.user.update({
+                    where: { email },
+                    data: {
+                        id: userId,
+                        firstName: clerkUser.firstName,
+                        lastName: clerkUser.lastName,
+                        imageUrl: clerkUser.imageUrl,
+                        username: clerkUser.username,
+                    }
+                });
+            } else if (!existingByEmail) {
+                // Create new user
+                await prisma.user.create({
+                    data: {
+                        id: userId,
+                        email,
+                        firstName: clerkUser.firstName,
+                        lastName: clerkUser.lastName,
+                        imageUrl: clerkUser.imageUrl,
+                        username: clerkUser.username,
+                        trustScore: 100
+                    }
+                });
+            }
             // Refetch data
             data = await getDashboardData(userId);
         }

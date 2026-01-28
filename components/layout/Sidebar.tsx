@@ -15,7 +15,9 @@ import {
     FileText,
     Network,
     Shield,
-    Sparkles
+    Sparkles,
+    Users,
+    HandCoins
 } from "lucide-react";
 
 const mainNavItems = [
@@ -33,6 +35,16 @@ const mainNavItems = [
         title: "New Loan",
         href: "/loans/new",
         icon: PlusCircle
+    },
+    {
+        title: "Request Loan",
+        href: "/borrow",
+        icon: HandCoins
+    },
+    {
+        title: "Borrowers",
+        href: "/borrowers",
+        icon: Users
     },
     {
         title: "Trust Score",
