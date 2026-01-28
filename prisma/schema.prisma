@@ -8,48 +8,57 @@ datasource db {
 }
 
 model User {
-  id                    String            @id
-  email                 String            @unique
-  username              String?           @unique
+  id                    String              @id
+  email                 String              @unique
+  username              String?             @unique
   firstName             String?
   lastName              String?
   imageUrl              String?
-  trustScore            Int               @default(100)
+  trustScore            Int                 @default(100)
   trustHistory          String?
   phoneNumber           String?
-  voiceRemindersEnabled Boolean           @default(false)
-  isSearchable          Boolean           @default(true)
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
+  voiceRemindersEnabled Boolean             @default(false)
+  isSearchable          Boolean             @default(true)
+  isBlacklisted         Boolean             @default(false)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
   disputeMessages       DisputeMessage[]
-  loansTaken            Loan[]            @relation("Borrower")
-  loansGiven            Loan[]            @relation("Lender")
+  loansTaken            Loan[]              @relation("Borrower")
+  loansGiven            Loan[]              @relation("Lender")
   loanTemplates         LoanTemplate[]
-  repaymentsReceived    Repayment[]       @relation("Receiver")
-  repaymentsGiven       Repayment[]       @relation("Payer")
+  repaymentsReceived    Repayment[]         @relation("Receiver")
+  repaymentsGiven       Repayment[]         @relation("Payer")
   userIntegrations      UserIntegration[]
+  blacklistEntry        Blacklist?
+  blacklistReports      Blacklist[]         @relation("ReportedBy")
+  trustScoreHistory     TrustScoreHistory[]
 }
 
 model Loan {
-  id             String          @id @default(uuid())
-  lenderId       String
-  borrowerId     String
-  amount         Float
-  balance        Float
-  currency       String          @default("USD")
-  purpose        String?
-  notes          String?
-  dueDate        DateTime
-  status         String
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  completedAt    DateTime?
-  disputeThread  DisputeThread?
-  emailReminders EmailReminder[]
-  borrower       User            @relation("Borrower", fields: [borrowerId], references: [id])
-  lender         User            @relation("Lender", fields: [lenderId], references: [id])
-  repayments     Repayment[]
-  voiceReminders VoiceReminder[]
+  id                String            @id @default(uuid())
+  lenderId          String
+  borrowerId        String
+  amount            Float
+  balance           Float
+  currency          String            @default("USD")
+  purpose           String?
+  notes             String?
+  dueDate           DateTime
+  status            String
+  hasInstallments   Boolean           @default(false)
+  qrCode            String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  completedAt       DateTime?
+  disputeThread     DisputeThread?
+  emailReminders    EmailReminder[]
+  borrower          User              @relation("Borrower", fields: [borrowerId], references: [id])
+  lender            User              @relation("Lender", fields: [lenderId], references: [id])
+  repayments        Repayment[]
+  voiceReminders    VoiceReminder[]
+  installments      Installment[]
+  bills             Bill[]
+  trustScoreHistory TrustScoreHistory[]
 
   @@index([lenderId])
   @@index([borrowerId])
@@ -91,14 +100,16 @@ model UserIntegration {
 }
 
 model EmailReminder {
-  id           String    @id @default(uuid())
-  loanId       String
-  type         String
-  sentAt       DateTime?
-  scheduledFor DateTime
-  status       String
-  createdAt    DateTime  @default(now())
-  loan         Loan      @relation(fields: [loanId], references: [id])
+  id            String       @id @default(uuid())
+  loanId        String
+  installmentId String?
+  type          String
+  sentAt        DateTime?
+  scheduledFor  DateTime
+  status        String
+  createdAt     DateTime     @default(now())
+  loan          Loan         @relation(fields: [loanId], references: [id])
+  installment   Installment? @relation(fields: [installmentId], references: [id])
 
   @@index([scheduledFor, status])
 }
@@ -172,4 +183,72 @@ model DisputeMessage {
   thread        DisputeThread @relation(fields: [threadId], references: [id])
 
   @@index([threadId])
+}
+
+model Installment {
+  id                String          @id @default(uuid())
+  loanId            String
+  loan              Loan            @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  installmentNumber Int
+  amount            Float
+  dueDate           DateTime
+  paidDate          DateTime?
+  paidAmount        Float?
+  status            String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  emailReminders    EmailReminder[]
+
+  @@index([loanId, status])
+  @@index([dueDate])
+}
+
+model TrustScoreHistory {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  event         String
+  change        Int
+  previousScore Int
+  newScore      Int
+  loanId        String?
+  loan          Loan?    @relation(fields: [loanId], references: [id])
+  description   String
+  metadata      String?
+  createdAt     DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model Blacklist {
+  id         String    @id @default(uuid())
+  userId     String    @unique
+  user       User      @relation(fields: [userId], references: [id])
+  reason     String
+  reportedBy String
+  reporter   User      @relation("ReportedBy", fields: [reportedBy], references: [id])
+  evidence   String?
+  severity   String
+  isActive   Boolean   @default(true)
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([userId, isActive])
+}
+
+model Bill {
+  id          String   @id @default(uuid())
+  loanId      String
+  loan        Loan     @relation(fields: [loanId], references: [id])
+  billNumber  String   @unique
+  generatedAt DateTime @default(now())
+  pdfUrl      String?
+  items       String
+  subtotal    Float
+  fees        Float?
+  total       Float
+  status      String
+
+  @@index([loanId, status])
 }
