@@ -58,9 +58,9 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
     setSendingEmail(true);
     try {
       await sendTestEmail(emailTo, {
-        loanId,
         amount: loanAmount,
         dueDate: dueDate.toISOString(),
+        borrowerName: "Borrower"
       });
       toast.success("Email sent successfully!");
       setEmailDialogOpen(false);

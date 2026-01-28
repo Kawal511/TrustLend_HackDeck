@@ -94,15 +94,15 @@ export function RaiseDisputeButton({ loanId, hasExistingDispute }: RaiseDisputeB
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2 border-orange-300 text-orange-700 hover:bg-orange-50">
+        <Button variant="outline" className="gap-2 border-gray-300 text-gray-900 hover:bg-gray-50">
           <AlertTriangle className="h-4 w-4" />
           Raise Dispute
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-orange-600" />
+          <DialogTitle className="flex items-center gap-2 text-gray-900 font-semibold">
+            <AlertTriangle className="h-5 w-5 text-gray-900" />
             Raise a Dispute
           </DialogTitle>
           <DialogDescription>
@@ -140,9 +140,9 @@ export function RaiseDisputeButton({ loanId, hasExistingDispute }: RaiseDisputeB
               {description.length}/1000 characters
             </p>
           </div>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p className="text-sm text-blue-800">
-              <strong>💡 AI Mediation:</strong> Once submitted, our AI mediator will analyze the situation and provide neutral suggestions to help both parties reach a fair resolution.
+          <div className="bg-gray-50 border border-gray-300 rounded-lg p-3">
+            <p className="text-sm text-gray-900">
+              <strong>AI Mediation:</strong> Once submitted, our AI mediator will analyze the situation and provide neutral suggestions to help both parties reach a fair resolution.
             </p>
           </div>
           <div className="flex justify-end gap-2">

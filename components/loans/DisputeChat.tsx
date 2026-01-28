@@ -124,15 +124,15 @@ export function DisputeChat({ loanId, currentUserId }: DisputeChatProps) {
   }
 
   return (
-    <Card className="border-orange-200">
+    <Card className="border-gray-300">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2 text-orange-700">
+            <CardTitle className="flex items-center gap-2 text-gray-900 font-semibold">
               <AlertTriangle className="h-5 w-5" />
               Dispute Resolution
             </CardTitle>
-            <CardDescription>AI-mediated dispute chat</CardDescription>
+            <CardDescription>AI-mediated dispute resolution</CardDescription>
           </div>
           <Badge variant={dispute.status === "RESOLVED" ? "default" : "secondary"} className="gap-1">
             {dispute.status === "RESOLVED" ? (
@@ -158,15 +158,15 @@ export function DisputeChat({ loanId, currentUserId }: DisputeChatProps) {
                 <div key={msg.id}>
                   {msg.isAiGenerated ? (
                     // AI Message
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="bg-gray-50 border border-gray-300 rounded-lg p-4">
                       <div className="flex items-start gap-3">
-                        <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                        <div className="h-8 w-8 rounded-full bg-gray-800 flex items-center justify-center flex-shrink-0">
                           <Bot className="h-4 w-4 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-blue-900 mb-1">AI Mediator</p>
-                          <p className="text-sm text-blue-800 whitespace-pre-wrap">{msg.content}</p>
-                          <p className="text-xs text-blue-600 mt-2">
+                          <p className="text-sm font-semibold text-gray-900 mb-1">AI Mediator</p>
+                          <p className="text-sm text-gray-900 whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                          <p className="text-xs text-gray-600 mt-2">
                             {new Date(msg.createdAt).toLocaleString()}
                           </p>
                         </div>
@@ -181,7 +181,7 @@ export function DisputeChat({ loanId, currentUserId }: DisputeChatProps) {
                       <Avatar className="h-8 w-8 flex-shrink-0">
                         <AvatarImage src={msg.sender.imageUrl || undefined} />
                         <AvatarFallback className={cn(
-                          isCurrentUser ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-700"
+                          isCurrentUser ? "bg-gray-800 text-white" : "bg-gray-200 text-gray-900"
                         )}>
                           {displayName.charAt(0).toUpperCase()}
                         </AvatarFallback>
@@ -190,14 +190,14 @@ export function DisputeChat({ loanId, currentUserId }: DisputeChatProps) {
                         "flex-1 min-w-0",
                         isCurrentUser && "flex flex-col items-end"
                       )}>
-                        <p className="text-sm font-medium mb-1">{displayName}</p>
+                        <p className="text-sm font-semibold text-gray-900 mb-1">{displayName}</p>
                         <div className={cn(
                           "inline-block rounded-lg p-3 max-w-[80%]",
                           isCurrentUser 
-                            ? "bg-purple-600 text-white" 
-                            : "bg-muted text-foreground"
+                            ? "bg-gray-800 text-white" 
+                            : "bg-gray-100 text-gray-900"
                         )}>
-                          <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                          <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
                           {new Date(msg.createdAt).toLocaleString()}
