@@ -90,6 +90,12 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
       return;
     }
 
+    // Clean and format phone number (remove spaces, dashes, etc.)
+    const cleanedPhone = phoneNumber.replace(/[\s\-\(\)]/g, '');
+    
+    // Ensure it starts with +
+    const formattedPhone = cleanedPhone.startsWith('+') ? cleanedPhone : `+${cleanedPhone}`;
+
     setSchedulingCall(true);
     try {
       // Use test voice API for immediate call
@@ -98,7 +104,7 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phoneNumber }),
+        body: JSON.stringify({ phoneNumber: formattedPhone }),
       });
 
       if (!response.ok) {
@@ -274,18 +280,23 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+                    <p className="text-xs text-amber-800">
+                      <strong>Trial Mode:</strong> Bolna can only call verified numbers. Use: <strong>+917021470357</strong> (include country code, no spaces)
+                    </p>
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Phone Number</Label>
                     <Input
                       id="phoneNumber"
                       type="tel"
-                      placeholder="+1234567890"
+                      placeholder="+917021470357"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       disabled={schedulingCall}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Include country code (e.g., +1 for US)
+                      Format: +[country code][number] (no spaces or dashes)
                     </p>
                   </div>
                   <div className="flex justify-end gap-2">

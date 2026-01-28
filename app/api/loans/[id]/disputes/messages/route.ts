@@ -102,6 +102,8 @@ Keep it under 100 words.`;
             const aiResponse = completion.choices[0]?.message?.content || 
                 "I recommend both parties take a moment to review the loan terms and discuss potential solutions.";
 
+            console.log("AI Mediation Response:", aiResponse);
+
             aiMessage = await prisma.disputeMessage.create({
                 data: {
                     threadId: loan.disputeThread.id,
@@ -130,7 +132,7 @@ Keep it under 100 words.`;
             aiMessage
         });
     } catch (error) {
-        console.error("Error sending message:", error);
+        console.error("Error sending dispute message:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
