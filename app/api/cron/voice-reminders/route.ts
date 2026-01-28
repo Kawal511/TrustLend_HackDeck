@@ -40,14 +40,11 @@ export async function GET(req: Request) {
 
     const result = await initiateBolnaCall({
       phoneNumber: reminder.phoneNumber,
-      agentId: process.env.BOLNA_AGENT_ID!,
-      metadata: {
-        loanId: reminder.loan.id,
-        borrowerName: reminder.loan.borrower.firstName || 'User',
-        lenderName: reminder.loan.lender.firstName || 'Lender',
-        amount: reminder.loan.balance,
-        dueDate: reminder.loan.dueDate.toLocaleDateString()
-      }
+      loanId: reminder.loan.id,
+      borrowerName: reminder.loan.borrower.firstName || 'User',
+      lenderName: reminder.loan.lender.firstName || 'Lender',
+      loanAmount: reminder.loan.balance,
+      dueDate: reminder.loan.dueDate.toLocaleDateString()
     });
 
     if (result.success) {
@@ -55,7 +52,7 @@ export async function GET(req: Request) {
         where: { id: reminder.id },
         data: { 
           status: 'CALLING',
-          callId: result.callId,
+          callId: result.call_id,
           calledAt: new Date()
         }
       });
