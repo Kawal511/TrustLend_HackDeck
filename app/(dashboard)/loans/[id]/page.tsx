@@ -15,6 +15,8 @@ import { RepaymentHistory } from "@/components/loans/RepaymentHistory";
 import { ContractExportButton } from "@/components/loans/ContractExportButton";
 import { CalendarExportButton } from "@/components/loans/CalendarExportButton";
 import { RemindersDisplay } from "@/components/loans/RemindersDisplay";
+import { RaiseDisputeButton } from "@/components/loans/RaiseDisputeButton";
+import { DisputeChat } from "@/components/loans/DisputeChat";
 import { formatCurrency, formatDate, getStatusColor, getDueDateStatus } from "@/lib/utils";
 import { ArrowLeft, Calendar, User, FileText, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,6 +27,7 @@ async function getLoan(loanId: string) {
         include: {
             lender: true,
             borrower: true,
+            disputeThread: true,
             repayments: {
                 include: { payer: true, receiver: true },
                 orderBy: { createdAt: "desc" }
@@ -87,7 +90,11 @@ export default async function LoanDetailPage({
                                 {isLender ? "You lent to" : "You borrowed from"} {displayName}
                             </p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
+                            <RaiseDisputeButton 
+                                loanId={loan.id} 
+                                hasExistingDispute={!!loan.disputeThread}
+                            />
                             <CalendarExportButton 
                                 loanId={loan.id} 
                                 loanAmount={loan.amount} 
@@ -187,6 +194,14 @@ export default async function LoanDetailPage({
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Dispute Resolution */}
+            {loan.disputeThread && (
+                <DisputeChat 
+                    loanId={loan.id}
+                    currentUserId={userId}
+                />
+            )}
 
             {/* Automated Reminders */}
             <RemindersDisplay 
