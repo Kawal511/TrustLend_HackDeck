@@ -107,9 +107,17 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
       }
 
       const data = await response.json();
-      toast.success("Voice call initiated!", {
-        description: `Call ID: ${data.callId}`
-      });
+      
+      if (data.callId) {
+        toast.success("Voice call initiated!", {
+          description: `Call ID: ${data.callId} - Status: ${data.status || 'queued'}`
+        });
+      } else {
+        toast.success("Voice call initiated!", {
+          description: data.message || "Call has been queued"
+        });
+      }
+      
       setCallDialogOpen(false);
       setPhoneNumber("");
       loadReminders();
