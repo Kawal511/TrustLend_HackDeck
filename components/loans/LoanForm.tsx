@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrustBadge } from "@/components/trust/TrustBadge";
 import { AIContractButton } from "@/components/loans/AIContractButton";
+import { TemplateSelector } from "@/components/loans/TemplateSelector";
 import { toast } from "sonner";
 import { Loader2, Search, User, AlertCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
@@ -102,6 +103,17 @@ export function LoanForm() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Template Selector */}
+            <TemplateSelector
+                onSelect={(template) => {
+                    setAmount(template.amount.toString());
+                    setPurpose(template.purpose);
+                    const dueDate = new Date();
+                    dueDate.setDate(dueDate.getDate() + template.daysUntilDue);
+                    setDueDate(dueDate.toISOString().split('T')[0]);
+                }}
+            />
+
             {/* Borrower Search */}
             <Card>
                 <CardHeader>

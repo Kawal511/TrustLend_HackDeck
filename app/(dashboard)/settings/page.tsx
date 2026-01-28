@@ -8,8 +8,9 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Bell, User, Link2, Shield } from "lucide-react";
+import { Settings, Bell, User, Link2, Shield, FileText } from "lucide-react";
 import { GoogleCalendarConnect } from "@/components/settings/GoogleCalendarConnect";
+import Link from "next/link";
 
 export default async function SettingsPage() {
     const { userId } = await auth();
@@ -29,10 +30,11 @@ export default async function SettingsPage() {
             </div>
 
             <Tabs defaultValue="profile" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-4">
                     <TabsTrigger value="profile">Profile</TabsTrigger>
                     <TabsTrigger value="notifications">Notifications</TabsTrigger>
                     <TabsTrigger value="integrations">Integrations</TabsTrigger>
+                    <TabsTrigger value="templates">Templates</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="profile" className="space-y-6">
@@ -200,6 +202,30 @@ export default async function SettingsPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <GoogleCalendarConnect />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="templates" className="space-y-6">
+                    {/* Loan Templates */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <FileText className="h-5 w-5" />
+                                Loan Templates
+                            </CardTitle>
+                            <CardDescription>Create and manage reusable loan templates for faster loan creation</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground mb-4">
+                                Templates allow you to save common loan configurations and apply them quickly when creating new loans.
+                            </p>
+                            <Link href="/settings/templates">
+                                <Button>
+                                    <FileText className="h-4 w-4 mr-2" />
+                                    Manage Templates
+                                </Button>
+                            </Link>
                         </CardContent>
                     </Card>
                 </TabsContent>
