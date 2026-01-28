@@ -83,8 +83,16 @@ export function RemindersDisplay({ loanId, borrowerEmail, lenderEmail, loanAmoun
 
     setSchedulingCall(true);
     try {
-      await scheduleVoiceReminder(loanId, phoneNumber);
-      toast.success("Voice call scheduled!");
+      // Schedule call for 5 minutes from now
+      const scheduledFor = new Date();
+      scheduledFor.setMinutes(scheduledFor.getMinutes() + 5);
+      
+      await scheduleVoiceReminder({
+        loanId,
+        phoneNumber,
+        scheduledFor: scheduledFor.toISOString()
+      });
+      toast.success("Voice call scheduled for " + scheduledFor.toLocaleTimeString());
       setCallDialogOpen(false);
       setPhoneNumber("");
       loadReminders();
