@@ -17,8 +17,12 @@ import { CalendarExportButton } from "@/components/loans/CalendarExportButton";
 import { RemindersDisplay } from "@/components/loans/RemindersDisplay";
 import { RaiseDisputeButton } from "@/components/loans/RaiseDisputeButton";
 import { DisputeChat } from "@/components/loans/DisputeChat";
+import InstallmentManager from "@/components/loans/InstallmentManager";
+import QRCodeDisplay from "@/components/loans/QRCodeDisplay";
+import BillGenerator from "@/components/loans/BillGenerator";
+import BlacklistWarning from "@/components/trust/BlacklistWarning";
 import { formatCurrency, formatDate, getStatusColor, getDueDateStatus } from "@/lib/utils";
-import { ArrowLeft, Calendar, User, FileText, AlertCircle } from "lucide-react";
+import { ArrowLeft, Calendar, User, FileText, AlertCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 async function getLoan(loanId: string) {
@@ -32,6 +36,15 @@ async function getLoan(loanId: string) {
                 include: { payer: true, receiver: true },
                 orderBy: { createdAt: "desc" }
             }
+        }
+    });
+}
+
+async function checkBlacklist(userId: string) {
+    return await prisma.blacklist.findFirst({
+        where: { 
+            userId,
+            isActive: true
         }
     });
 }
@@ -58,6 +71,9 @@ export default async function LoanDetailPage({
     const otherParty = isLender ? loan.borrower : loan.lender;
     const dueDateStatus = getDueDateStatus(loan.dueDate);
     const canRecordPayment = ["ACTIVE", "OVERDUE"].includes(loan.status) && loan.balance > 0;
+
+    // Check if other party is blacklisted
+    const blacklistEntry = await checkBlacklist(otherParty.id);
 
     const displayName = otherParty.firstName && otherParty.lastName
         ? `${otherParty.firstName} ${otherParty.lastName}`
@@ -150,6 +166,23 @@ export default async function LoanDetailPage({
                                     <TrustBadge score={otherParty.trustScore} size="sm" />
                                 </div>
                             </div>
+                            {blacklistEntry && (
+                                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                    <div className="flex items-start gap-2">
+                                        <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                                        <div className="text-sm text-red-800">
+                                            <p className="font-semibold">Blacklisted User</p>
+                                            <p>{blacklistEntry.reason}</p>
+                                            <p className="text-xs mt-1">Severity: {blacklistEntry.severity}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            {!blacklistEntry && (
+                                <div className="mt-3">
+                                    <BlacklistWarning userId={otherParty.id} userName={displayName} />
+                                </div>
+                            )}
                         </div>
 
                         {/* Due Date */}
@@ -202,6 +235,19 @@ export default async function LoanDetailPage({
                     currentUserId={userId}
                 />
             )}
+
+            {/* Installment Manager */}
+            <InstallmentManager 
+                loanId={loan.id}
+                loanAmount={loan.amount}
+                hasInstallments={loan.hasInstallments}
+            />
+
+            {/* QR Code & Bills */}
+            <div className="grid md:grid-cols-2 gap-6">
+                <QRCodeDisplay loanId={loan.id} existingQRCode={loan.qrCode} />
+                <BillGenerator loanId={loan.id} />
+            </div>
 
             {/* Automated Reminders */}
             <RemindersDisplay 
