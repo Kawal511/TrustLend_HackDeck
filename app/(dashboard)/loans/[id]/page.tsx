@@ -183,13 +183,19 @@ export default async function LoanDetailPage({
                                 </h3>
                                 <p className="text-gray-700">{loan.notes}</p>
                             </div>
-                Automated Reminders */}
-            <RemindersDisplay loanId={loan.id} />
-
-            {/*         )}
+                        )}
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Automated Reminders */}
+            <RemindersDisplay 
+                loanId={loan.id}
+                borrowerEmail={loan.borrower.email}
+                lenderEmail={loan.lender.email}
+                loanAmount={loan.amount}
+                dueDate={loan.dueDate}
+            />
 
             {/* Repayment History */}
             <Card>
