@@ -22,6 +22,9 @@ export const Navbar: React.FC<NavbarProps> = ({ dark }) => {
       </div>
 
       <div className="flex items-center gap-4">
+        <Link href="/overview" className="bg-transparent hover:bg-white/10 text-white border border-white/20 px-6 py-3 rounded-full font-bold text-sm transition-all hidden sm:block">
+          Overview
+        </Link>
         <Link href="/" className="bg-lime-400 hover:bg-lime-500 text-black px-8 py-3 rounded-full font-bold text-sm transition-all">
           Sign up
         </Link>

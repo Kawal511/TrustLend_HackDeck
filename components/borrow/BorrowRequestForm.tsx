@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, Send, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface Lender {
     id: string;
@@ -101,7 +101,8 @@ export function BorrowRequestForm({ userId, lenders }: BorrowRequestFormProps) {
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             {message && (
-                <div className={`p-4 rounded-lg ${message.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+                <div className={`p-4 rounded-lg flex items-center gap-3 ${message.type === 'success' ? 'bg-green-50 text-green-900 border border-green-200' : 'bg-red-50 text-red-900 border border-red-200'}`}>
+                    {message.type === 'success' ? <CheckCircle className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
                     {message.text}
                 </div>
             )}
@@ -118,6 +119,7 @@ export function BorrowRequestForm({ userId, lenders }: BorrowRequestFormProps) {
                         required
                         min="100"
                         max="500000"
+                        className="h-12 text-lg"
                     />
                 </div>
 
@@ -130,19 +132,20 @@ export function BorrowRequestForm({ userId, lenders }: BorrowRequestFormProps) {
                         onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
                         required
                         min={minDate}
+                        className="h-12"
                     />
                 </div>
             </div>
 
             {/* Interest Rate Info */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
                 <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-blue-600 font-bold text-sm">%</span>
+                    <div className="flex-shrink-0 w-8 h-8 bg-white border border-gray-200 rounded-full flex items-center justify-center">
+                        <span className="text-gray-600 font-bold text-sm">%</span>
                     </div>
                     <div>
-                        <p className="font-medium text-blue-800">About Interest Rates</p>
-                        <p className="text-sm text-blue-700 mt-1">
+                        <p className="font-bold text-gray-900">About Interest Rates</p>
+                        <p className="text-sm text-gray-600 mt-1">
                             Interest rates will be decided by the lender upon approval.
                             You can negotiate the rate before accepting the loan offer.
                             The final amount will be shown when the lender approves your request.
@@ -157,7 +160,7 @@ export function BorrowRequestForm({ userId, lenders }: BorrowRequestFormProps) {
                     value={formData.lenderId}
                     onValueChange={(value) => setFormData({ ...formData, lenderId: value })}
                 >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12">
                         <SelectValue placeholder="Any available lender" />
                     </SelectTrigger>
                     <SelectContent>
@@ -181,7 +184,7 @@ export function BorrowRequestForm({ userId, lenders }: BorrowRequestFormProps) {
                     onValueChange={(value) => setFormData({ ...formData, purpose: value })}
                     required
                 >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12">
                         <SelectValue placeholder="Select purpose" />
                     </SelectTrigger>
                     <SelectContent>
@@ -202,7 +205,7 @@ export function BorrowRequestForm({ userId, lenders }: BorrowRequestFormProps) {
                     value={formData.urgency}
                     onValueChange={(value) => setFormData({ ...formData, urgency: value })}
                 >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12">
                         <SelectValue placeholder="Select urgency" />
                     </SelectTrigger>
                     <SelectContent>
@@ -222,18 +225,19 @@ export function BorrowRequestForm({ userId, lenders }: BorrowRequestFormProps) {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
+                    className="resize-none"
                 />
             </div>
 
             <Button
                 type="submit"
                 disabled={loading || !formData.amount || !formData.purpose || !formData.dueDate}
-                className="w-full bg-purple-600 hover:bg-purple-700"
+                className="w-full h-12 text-lg bg-black text-white hover:bg-black/90 hover:scale-[1.01] transition-all rounded-xl shadow-lg"
                 size="lg"
             >
                 {loading ? (
                     <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                         Submitting...
                     </>
                 ) : (

@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     // Read file for OCR
     const fileBuffer = await readUploadedFile(fileUrl);
 
-    // Extract data using Gemini OCR
+    // Extract data using Document Verification
     const ocrResult = await extractIncomeDataFromDocument(
       fileBuffer,
       file.type,

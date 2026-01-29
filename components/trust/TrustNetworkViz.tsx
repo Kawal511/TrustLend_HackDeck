@@ -192,28 +192,32 @@ export function TrustNetworkViz({ network, currentUserId, onNodeClick }: TrustNe
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             {/* Controls */}
-            <Card>
-                <CardContent className="py-4">
+            <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl bg-white">
+                <CardContent className="py-6">
                     <div className="flex flex-wrap gap-4 items-center">
                         <div className="flex gap-2 flex-1">
-                            <Input
-                                placeholder="Search user..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                            />
-                            <Button variant="outline" onClick={handleSearch}>
-                                <Search className="h-4 w-4" />
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                <Input
+                                    placeholder="Search user..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                                    className="pl-10 h-10 border-2 border-gray-200 focus-visible:border-black focus-visible:ring-0 rounded-xl"
+                                />
+                            </div>
+                            <Button variant="outline" onClick={handleSearch} className="border-2 border-black hover:bg-black hover:text-white transition-colors rounded-xl font-bold">
+                                Search
                             </Button>
                         </div>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="sm">
+                        <div className="flex gap-2 items-center bg-gray-50 p-1 rounded-xl border border-gray-200">
+                            <Button variant="ghost" size="sm" onClick={() => setZoom(z => Math.max(0.3, z - 0.1))} className="hover:bg-white rounded-lg">
                                 <ZoomOut className="h-4 w-4" />
                             </Button>
-                            <span className="text-sm text-gray-500 py-2">{Math.round(zoom * 100)}%</span>
-                            <Button variant="outline" size="sm">
+                            <span className="text-xs font-bold w-12 text-center">{Math.round(zoom * 100)}%</span>
+                            <Button variant="ghost" size="sm" onClick={() => setZoom(z => Math.min(3, z + 0.1))} className="hover:bg-white rounded-lg">
                                 <ZoomIn className="h-4 w-4" />
                             </Button>
                         </div>
@@ -222,34 +226,34 @@ export function TrustNetworkViz({ network, currentUserId, onNodeClick }: TrustNe
             </Card>
 
             {/* Network Visualization */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Users className="h-5 w-5" />
-                        Trust Network
+            <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl bg-white overflow-hidden">
+                <CardHeader className="border-b-2 border-black bg-white pb-4">
+                    <CardTitle className="flex items-center gap-2 text-xl font-black">
+                        <Users className="h-6 w-6" />
+                        Network Graph
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="font-medium">
                         {network.nodes.length} users · {network.edges.length} connections
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <div className="relative bg-gray-50 rounded-lg overflow-hidden">
-                        <svg ref={svgRef} width="100%" height="500" />
+                <CardContent className="p-0">
+                    <div className="relative bg-gray-50/50">
+                        <svg ref={svgRef} width="100%" height="500" className="opacity-90 hover:opacity-100 transition-opacity" />
 
                         {/* Legend */}
-                        <div className="absolute bottom-4 left-4 bg-white/90 rounded-lg p-3 text-xs space-y-2">
-                            <div className="font-medium mb-1">Legend</div>
+                        <div className="absolute bottom-4 left-4 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] rounded-xl p-4 text-xs space-y-2">
+                            <div className="font-bold mb-2 uppercase tracking-wide text-gray-400">Connection Types</div>
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-green-500" />
-                                <span>Completed loans</span>
+                                <div className="w-3 h-3 rounded-full bg-green-500 border border-green-600" />
+                                <span className="font-medium">Completed</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                                <span>Active loans</span>
+                                <div className="w-3 h-3 rounded-full bg-yellow-500 border border-yellow-600" />
+                                <span className="font-medium">Active</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-red-500" />
-                                <span>Disputed</span>
+                                <div className="w-3 h-3 rounded-full bg-red-500 border border-red-600" />
+                                <span className="font-medium">Disputed</span>
                             </div>
                         </div>
                     </div>
@@ -258,30 +262,37 @@ export function TrustNetworkViz({ network, currentUserId, onNodeClick }: TrustNe
 
             {/* Selected Node Details */}
             {selectedNode && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{selectedNode.name}</CardTitle>
-                        <CardDescription>{selectedNode.email}</CardDescription>
+                <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl bg-white animate-in slide-in-from-bottom-2">
+                    <CardHeader className="border-b border-gray-100 pb-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="font-black text-xl">{selectedNode.name}</CardTitle>
+                                <CardDescription>{selectedNode.email}</CardDescription>
+                            </div>
+                            <Badge className="bg-black text-white hover:bg-black font-mono">
+                                ID: {selectedNode.id.slice(0, 6)}
+                            </Badge>
+                        </div>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-6">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div className="bg-purple-50 rounded-lg p-3">
-                                <div className="text-sm text-gray-500">Trust Score</div>
-                                <div className="text-xl font-bold" style={{ color: getTrustColor(selectedNode.trustScore) }}>
+                            <div className="bg-white border-2 border-gray-100 rounded-xl p-4 hover:border-black transition-colors">
+                                <div className="text-xs font-bold text-gray-400 uppercase">Trust Score</div>
+                                <div className="text-3xl font-black mt-1" style={{ color: getTrustColor(selectedNode.trustScore) }}>
                                     {selectedNode.trustScore}
                                 </div>
                             </div>
-                            <div className="bg-blue-50 rounded-lg p-3">
-                                <div className="text-sm text-gray-500">Loans Given</div>
-                                <div className="text-xl font-bold">{selectedNode.loansGiven}</div>
+                            <div className="bg-white border-2 border-gray-100 rounded-xl p-4 hover:border-black transition-colors">
+                                <div className="text-xs font-bold text-gray-400 uppercase">Loans Given</div>
+                                <div className="text-2xl font-black text-black mt-1">{selectedNode.loansGiven}</div>
                             </div>
-                            <div className="bg-green-50 rounded-lg p-3">
-                                <div className="text-sm text-gray-500">Loans Taken</div>
-                                <div className="text-xl font-bold">{selectedNode.loansTaken}</div>
+                            <div className="bg-white border-2 border-gray-100 rounded-xl p-4 hover:border-black transition-colors">
+                                <div className="text-xs font-bold text-gray-400 uppercase">Loans Taken</div>
+                                <div className="text-2xl font-black text-black mt-1">{selectedNode.loansTaken}</div>
                             </div>
-                            <div className="bg-orange-50 rounded-lg p-3">
-                                <div className="text-sm text-gray-500">Total Volume</div>
-                                <div className="text-xl font-bold">{formatCurrency(selectedNode.totalVolume)}</div>
+                            <div className="bg-white border-2 border-gray-100 rounded-xl p-4 hover:border-black transition-colors">
+                                <div className="text-xs font-bold text-gray-400 uppercase">Total Volume</div>
+                                <div className="text-2xl font-black text-black mt-1 tracking-tight">{formatCurrency(selectedNode.totalVolume)}</div>
                             </div>
                         </div>
                     </CardContent>
@@ -289,27 +300,27 @@ export function TrustNetworkViz({ network, currentUserId, onNodeClick }: TrustNe
             )}
 
             {/* Network Metrics */}
-            <Card>
+            <Card className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-2xl bg-black text-white">
                 <CardHeader>
-                    <CardTitle>Network Metrics</CardTitle>
+                    <CardTitle className="text-xl font-bold">Network Analytics</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                            <div className="text-sm text-gray-500">Avg Connections</div>
-                            <div className="text-lg font-bold">{network.metrics.averageDegree.toFixed(1)}</div>
+                        <div className="p-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
+                            <div className="text-xs text-gray-400 uppercase font-bold">Avg Connections</div>
+                            <div className="text-2xl font-black mt-1">{network.metrics.averageDegree.toFixed(1)}</div>
                         </div>
-                        <div>
-                            <div className="text-sm text-gray-500">Clustering</div>
-                            <div className="text-lg font-bold">{(network.metrics.clusteringCoefficient * 100).toFixed(1)}%</div>
+                        <div className="p-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
+                            <div className="text-xs text-gray-400 uppercase font-bold">Clustering</div>
+                            <div className="text-2xl font-black mt-1">{(network.metrics.clusteringCoefficient * 100).toFixed(1)}%</div>
                         </div>
-                        <div>
-                            <div className="text-sm text-gray-500">Trust Hubs</div>
-                            <div className="text-lg font-bold">{network.metrics.trustHubs.length}</div>
+                        <div className="p-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
+                            <div className="text-xs text-gray-400 uppercase font-bold">Trust Hubs</div>
+                            <div className="text-2xl font-black mt-1">{network.metrics.trustHubs.length}</div>
                         </div>
-                        <div>
-                            <div className="text-sm text-gray-500">Total Volume</div>
-                            <div className="text-lg font-bold">
+                        <div className="p-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10">
+                            <div className="text-xs text-gray-400 uppercase font-bold">Total Volume</div>
+                            <div className="text-2xl font-black mt-1 tracking-tight">
                                 {formatCurrency(network.edges.reduce((sum, e) => sum + e.totalAmount, 0))}
                             </div>
                         </div>

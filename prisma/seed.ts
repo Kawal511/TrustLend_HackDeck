@@ -162,9 +162,32 @@ async function main() {
       dueDate: new Date('2026-02-01'),
       status: 'OVERDUE',
     },
+    {
+      id: 'loan_atharva_001',
+      lenderId: 'atharva_user_123',
+      borrowerId: 'user_rahul_001',
+      amount: 5000,
+      balance: 5000,
+      purpose: 'Test Loan to Verify Reflection',
+      dueDate: new Date('2026-12-31'),
+      status: 'ACTIVE',
+    },
   ]
 
-  for (const loanData of loans) {
+  // Get the actual ID for Atharva (in case it differs from seed due to existing Clerk record)
+  const atharvaUser = await prisma.user.findUnique({ where: { email: 'atharvavdeo75@gmail.com' } });
+  const atharvaId = atharvaUser ? atharvaUser.id : 'atharva_user_123';
+
+  console.log(`ℹ️ Using Atharva ID: ${atharvaId}`);
+
+  // Update loan data with correct ID if needed
+  const loansWithCorrectId = loans.map(l => {
+    if (l.lenderId === 'atharva_user_123') return { ...l, lenderId: atharvaId };
+    if (l.borrowerId === 'atharva_user_123') return { ...l, borrowerId: atharvaId };
+    return l;
+  });
+
+  for (const loanData of loansWithCorrectId) {
     const loan = await prisma.loan.upsert({
       where: { id: loanData.id },
       update: {},
@@ -233,12 +256,12 @@ async function main() {
   `)
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+// main()
+//   .then(async () => {
+//     await prisma.$disconnect()
+//   })
+//   .catch(async (e) => {
+//     console.error(e)
+//     await prisma.$disconnect()
+//     process.exit(1)
+//   })

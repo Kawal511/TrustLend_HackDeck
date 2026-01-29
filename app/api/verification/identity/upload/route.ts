@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     // Read file for OCR
     const fileBuffer = await readUploadedFile(fileUrl);
 
-    // Extract data using Gemini OCR
+    // Extract data using Document Verification
     const ocrResult = await extractIdDataFromDocument(
       fileBuffer,
       file.type,
@@ -58,9 +58,9 @@ export async function POST(req: Request) {
         userId,
         idType,
         idDocument: fileUrl,
-        idNumber: ocrResult.extractedData.aadhaarNumber || 
-                  ocrResult.extractedData.panNumber || 
-                  verification?.idNumber,
+        idNumber: ocrResult.extractedData.aadhaarNumber ||
+          ocrResult.extractedData.panNumber ||
+          verification?.idNumber,
         extractedData: JSON.stringify(ocrResult.extractedData),
         verificationScore: 20
       },

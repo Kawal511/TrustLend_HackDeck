@@ -33,6 +33,7 @@
     "d3": "^7.9.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
+    "framer-motion": "^12.29.2",
     "googleapis": "^168.0.0",
     "groq-sdk": "^0.37.0",
     "jspdf": "^4.0.0",

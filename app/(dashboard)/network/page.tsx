@@ -37,11 +37,11 @@ export default async function NetworkPage() {
     const network = await getNetworkData();
 
     return (
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold text-gray-900">Trust Network</h1>
-                <p className="text-gray-500 mt-1">
-                    Visualize lending relationships and discover connections
+        <div className="space-y-8">
+            <div className="border-b-2 border-dashed border-gray-200 pb-6">
+                <h1 className="text-4xl font-black tracking-tight text-black mb-2">Trust Network</h1>
+                <p className="text-gray-500 font-medium">
+                    Visualize lending relationships and discover trusted connections
                 </p>
             </div>
 

@@ -2,8 +2,8 @@
 
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Navbar } from "@/components/layout/Navbar";
-import { Sidebar } from "@/components/layout/Sidebar";
+import { TopNav } from "@/components/layout/TopNav";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { prisma } from "@/lib/prisma";
 
 export default async function DashboardLayout({
@@ -24,7 +24,7 @@ export default async function DashboardLayout({
 
     if (!dbUser) {
         const primaryEmail = user.emailAddresses.find(e => e.id === user.primaryEmailAddressId)?.emailAddress || user.emailAddresses[0].emailAddress;
-        
+
         await prisma.user.create({
             data: {
                 id: user.id,
@@ -38,14 +38,12 @@ export default async function DashboardLayout({
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <Navbar />
-            <div className="flex">
-                <Sidebar />
-                <main className="flex-1 p-6 lg:p-8 ml-0 lg:ml-64">
-                    {children}
-                </main>
-            </div>
+        <div className="min-h-screen bg-background text-foreground pb-24">
+            <TopNav />
+            <main className="px-8 py-6">
+                {children}
+            </main>
+            <BottomNav />
         </div>
     );
 }
