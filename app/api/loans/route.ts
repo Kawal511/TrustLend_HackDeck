@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         }
 
         // Check trust-based limits
-        const limit = calculateLoanLimit(borrower.trustScore);
+        const limit = calculateLoanLimit(borrower.trustScore, borrower.email);
         if (validated.amount > limit.maxAmount) {
             return NextResponse.json({
                 error: `Amount exceeds borrower's trust limit ($${limit.maxAmount})`,

@@ -20,9 +20,25 @@ export async function POST(req: Request) {
       );
     }
 
+    // Format phone number (default to +91 if no country code)
+    let formattedPhone = phoneNumber.replace(/[^\d+]/g, ''); // Remove non-digit chars except +
+    if (!formattedPhone.startsWith('+')) {
+      if (formattedPhone.length === 10) {
+        formattedPhone = '+91' + formattedPhone;
+      } else {
+        // If length is not 10 and no +, we'll just try prepending + or assume user knows what they did, 
+        // but for 10 digits we assume India.
+        if (!formattedPhone.startsWith('91') && formattedPhone.length === 12) {
+          formattedPhone = '+' + formattedPhone;
+        } else if (formattedPhone.length > 10) {
+          formattedPhone = '+' + formattedPhone;
+        }
+      }
+    }
+
     // Initiate test call
     const callData = await initiateBolnaCall({
-      phoneNumber,
+      phoneNumber: formattedPhone,
       loanAmount: 100,
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
       borrowerName: "Test User",

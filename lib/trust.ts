@@ -38,7 +38,17 @@ export function calculateTrustScoreChange(event: TrustEvent): number {
 }
 
 // Calculate loan limits based on trust score
-export function calculateLoanLimit(trustScore: number) {
+export function calculateLoanLimit(trustScore: number, email?: string) {
+    // Exempted users with high limits
+    const exemptedEmails = [
+        'atharva.v.deo@gmail.com',
+        'atharvavdeo75@gmail.com'
+    ];
+
+    if (email && exemptedEmails.includes(email)) {
+        return { maxAmount: 10000, maxActiveLoans: 5 };
+    }
+
     if (trustScore < 50) return { maxAmount: 100, maxActiveLoans: 1 };
     if (trustScore < 75) return { maxAmount: 500, maxActiveLoans: 3 };
     if (trustScore < 100) return { maxAmount: 2000, maxActiveLoans: 5 };

@@ -99,7 +99,7 @@ export function LoanForm() {
         }
     }
 
-    const limits = borrowerInfo ? calculateLoanLimit(borrowerInfo.trustScore) : null;
+    const limits = borrowerInfo ? calculateLoanLimit(borrowerInfo.trustScore, borrowerInfo.email) : null;
     const amountNum = parseFloat(amount) || 0;
     const exceedsLimit = limits && amountNum > limits.maxAmount;
 

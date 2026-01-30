@@ -1,6 +1,6 @@
 // app/(dashboard)/profile/page.tsx - User profile with trust score
 
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,7 +69,6 @@ export default async function ProfilePage() {
     const { userId } = await auth();
     if (!userId) redirect("/sign-in");
 
-    const clerkUser = await currentUser();
     const { user, stats, trustHistory } = await getProfileData(userId);
 
     if (!user) {
@@ -82,7 +81,7 @@ export default async function ProfilePage() {
 
     const displayName = user.firstName && user.lastName
         ? `${user.firstName} ${user.lastName}`
-        : clerkUser?.emailAddresses[0]?.emailAddress || "User";
+        : user.email || "User";
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
@@ -95,7 +94,7 @@ export default async function ProfilePage() {
             {/* Trust Gauge Card */}
             <Card>
                 <CardContent className="pt-8 pb-6">
-                    <TrustGauge score={user.trustScore} size="lg" />
+                    <TrustGauge score={user.trustScore} email={user.email} size="lg" />
                 </CardContent>
             </Card>
 

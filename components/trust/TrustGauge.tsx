@@ -8,13 +8,14 @@ import { formatCurrency } from "@/lib/utils";
 
 interface TrustGaugeProps {
     score: number;
+    email?: string;
     size?: "sm" | "md" | "lg";
     showDetails?: boolean;
 }
 
-export function TrustGauge({ score, size = "md", showDetails = true }: TrustGaugeProps) {
+export function TrustGauge({ score, email, size = "md", showDetails = true }: TrustGaugeProps) {
     const tier = getTrustTier(score);
-    const limits = calculateLoanLimit(score);
+    const limits = calculateLoanLimit(score, email);
     const percentage = (score / 150) * 100;
 
     const sizes = {
