@@ -493,53 +493,17 @@ npx prisma db seed   # Seed sample data
 
 ## 📸 Application Screenshots
 
-![Landing Hero](images(src)/Screenshot%202026-01-29%20020113.png)
-
-![Dashboard](images(src)/Screenshot%202026-01-29%20020155.png)
-
-![Loans List](images(src)/Screenshot%202026-01-29%20020215.png)
-
-![Loan Details](images(src)/Screenshot%202026-01-29%20020245.png)
-
-![Trust Score](images(src)/Screenshot%202026-01-29%20020310.png)
-
-![Identity Verification](images(src)/Screenshot%202026-01-29%20020345.png)
-
-![Income Verification](images(src)/Screenshot%202026-01-29%20020401.png)
-
-![Collateral Verification](images(src)/Screenshot%202026-01-29%20020424.png)
-
-![AI Contract](images(src)/Screenshot%202026-01-29%20020508.png)
-
-
-![New Loan](images(src)/Screenshot%202026-01-29%20020543.png)
-
-
-![Repayment](images(src)/Screenshot%202026-01-29%20020605.png)
-
-
-![Trust Network](images(src)/Screenshot%202026-01-29%20020637.png)
-
-
-![Fraud Detection](images(src)/Screenshot%202026-01-29%20020820.png)
-
-
-![Settings](images(src)/Screenshot%202026-01-29%20020945.png)
-
-
-![Notifications](images(src)/Screenshot%202026-01-29%20021007.png)
-
-
-![Profile](images(src)/Screenshot%202026-01-29%20021047.png)
-
-
-![Borrower Registration](images(src)/Screenshot%202026-01-29%20021150.png)
-
-
-![Payment QR](images(src)/Screenshot%202026-01-29%20021222.png)
-
-
-![Mobile View](images(src)/Screenshot%202026-01-29%20021658.png)
+![App Preview 1](images(src)/1.png)
+![App Preview 2](images(src)/2.png)
+![App Preview 3](images(src)/3.png)
+![App Preview 4](images(src)/4.png)
+![App Preview 5](images(src)/5.png)
+![App Preview 6](images(src)/6.png)
+![App Preview 7](images(src)/7.png)
+![App Preview 8](images(src)/8.png)
+![App Preview 9](images(src)/9.png)
+![App Preview 10](images(src)/10.png)
+![App Preview 11](images(src)/11.png)
 
 ---
 
