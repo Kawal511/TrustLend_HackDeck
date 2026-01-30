@@ -59,7 +59,7 @@ function CryptoWalletForm({ onSuccess }: { onSuccess: () => void }) {
 
       if (res.ok) {
         toast.success('Crypto Wallet Added', {
-          description: `Collateral value: $${data.collateralValueUSD.toLocaleString()}`
+          description: `Collateral value: ₹${data.collateralValueUSD.toLocaleString()}`
         });
         onSuccess();
       } else {
@@ -194,7 +194,7 @@ function AssetDocumentUpload({ onSuccess }: { onSuccess: () => void }) {
       </div>
 
       <div>
-        <Label>Estimated Value (USD)</Label>
+        <Label>Estimated Value (INR)</Label>
         <Input
           type="number"
           value={value}

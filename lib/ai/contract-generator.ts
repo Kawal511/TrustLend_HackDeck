@@ -101,7 +101,7 @@ function parseWithRegex(input: string): ParsedTerms {
     const terms: ParsedTerms = {};
 
     // Amount patterns
-    const amountMatch = input.match(/\$?([\d,]+(?:\.\d{2})?)/);
+    const amountMatch = input.match(/[\$₹]?([0-9,]+(\.[0-9]{2})?)/);
     if (amountMatch) {
         terms.amount = parseFloat(amountMatch[1].replace(",", ""));
     }
@@ -124,7 +124,7 @@ function parseWithRegex(input: string): ParsedTerms {
     else if (/monthly/i.test(input)) terms.paymentSchedule = "monthly";
 
     // Late fee patterns
-    const lateFeeMatch = input.match(/late\s*fee[:\s]*\$?(\d+)/i);
+    const lateFeeMatch = input.match(/late\s*fee[:\s]*[\$₹]?(\d+)/i);
     if (lateFeeMatch) {
         terms.lateFee = parseFloat(lateFeeMatch[1]);
     }
@@ -197,7 +197,7 @@ export async function generateContract(
     // Set defaults for missing values
     const terms = {
         amount: parsedTerms.amount || 1000,
-        currency: "$",
+        currency: "₹",
         duration: parsedTerms.duration || "6 months",
         interestRate: parsedTerms.interestRate || 0.05,
         paymentSchedule: parsedTerms.paymentSchedule || "monthly",
@@ -247,7 +247,7 @@ export function extractHighlightedTerms(contract: LoanContract): Array<{
     const text = contract.generatedText;
 
     // Amount highlight
-    const amountStr = `$${contract.terms.amount.toLocaleString()}`;
+    const amountStr = `₹${contract.terms.amount.toLocaleString()}`;
     const amountPos = text.indexOf(amountStr);
     if (amountPos !== -1) {
         highlights.push({

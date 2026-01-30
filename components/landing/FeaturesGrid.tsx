@@ -114,7 +114,7 @@ export const FeaturesGrid: React.FC = () => {
               </div>
               <div className="bg-[#1C1E1C] p-4 rounded-3xl rounded-br-none shadow-xl max-w-[85%] border border-white/5">
                 <p className="text-[11px] text-white/90 leading-relaxed">
-                  You spent <span className="text-lime-400 font-bold">$142.50</span> this week, which is <span className="text-emerald-400 font-bold">12% less</span> than last week. Great job staying on budget! 🚀
+                  You spent <span className="text-lime-400 font-bold">₹142.50</span> this week, which is <span className="text-emerald-400 font-bold">12% less</span> than last week. Great job staying on budget! 🚀
                 </p>
               </div>
             </div>
@@ -136,7 +136,7 @@ export const FeaturesGrid: React.FC = () => {
                 </svg>
               </div>
               <div className="text-[9px] font-extrabold text-black/40 uppercase tracking-widest leading-none mb-2">Freelance</div>
-              <div className="text-base font-bold text-[#0A1A3F]">$1,500</div>
+              <div className="text-base font-bold text-[#0A1A3F]">₹1,500</div>
             </div>
             <div className="bg-[#E2DBFF] rounded-[24px] p-3 flex flex-col items-center text-center h-40 justify-center hover:scale-[1.03] hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 group cursor-pointer border border-transparent hover:border-indigo-200">
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
@@ -145,7 +145,7 @@ export const FeaturesGrid: React.FC = () => {
                 </svg>
               </div>
               <div className="text-[9px] font-extrabold text-black/40 uppercase tracking-widest leading-none mb-2">Salary</div>
-              <div className="text-base font-bold text-[#0A1A3F]">$4,000</div>
+              <div className="text-base font-bold text-[#0A1A3F]">₹4,000</div>
             </div>
             <div className="bg-[#FFE2E2] rounded-[24px] p-3 flex flex-col items-center text-center h-40 justify-center hover:scale-[1.03] hover:shadow-xl hover:shadow-rose-500/10 transition-all duration-300 group cursor-pointer border border-transparent hover:border-rose-200">
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
@@ -154,7 +154,7 @@ export const FeaturesGrid: React.FC = () => {
                 </svg>
               </div>
               <div className="text-[9px] font-extrabold text-black/40 uppercase tracking-widest leading-none mb-2">Grocery</div>
-              <div className="text-base font-bold text-[#0A1A3F]">$4,000</div>
+              <div className="text-base font-bold text-[#0A1A3F]">₹4,000</div>
             </div>
           </div>
         </div>

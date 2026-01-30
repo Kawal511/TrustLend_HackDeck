@@ -27,10 +27,7 @@ export function AIServicesPanel() {
       const result = await generateContract({
         lenderName: "John Doe",
         borrowerName: "Jane Smith",
-        amount: 1000,
-        purpose: "Emergency medical expense",
-        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        interestRate: 0,
+        prompt: "₹1000 loan for Emergency medical expense to be repaid by " + new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() + " with 0% interest",
       });
       setContractData(result.contract);
       toast.success("Contract generated successfully!");

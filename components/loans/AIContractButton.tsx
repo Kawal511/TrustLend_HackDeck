@@ -46,9 +46,9 @@ export function AIContractButton({ onContractGenerated }: AIContractButtonProps)
 
       if (onContractGenerated) {
         // Parse the generated contract to extract loan details
-        const amountMatch = result.contract.match(/\$?([\d,]+\.?\d*)/);
+        const amountMatch = result.contract.match(/[\$₹]([\d,]+\.?\d*)/);
         const amount = amountMatch ? parseFloat(amountMatch[1].replace(/,/g, '')) : 0;
-        
+
         // Extract due date if mentioned
         const dateMatch = result.contract.match(/due date.*?(\d{4}-\d{2}-\d{2})/i);
         const dueDate = dateMatch ? dateMatch[1] : '';
@@ -120,7 +120,7 @@ export function AIContractButton({ onContractGenerated }: AIContractButtonProps)
             <Label htmlFor="prompt">Loan Details</Label>
             <Textarea
               id="prompt"
-              placeholder="Example: $5000 loan for home renovation, to be repaid in 6 months with 5% interest. Monthly installments of $850."
+              placeholder="Example: ₹5000 loan for home renovation, to be repaid in 6 months with 5% interest. Monthly installments of ₹850."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               disabled={loading}

@@ -52,7 +52,7 @@ export const PhoneMockup: React.FC = () => {
                 </svg>
               </div>
             </div>
-            <div className="text-sm font-bold">$100.00</div>
+            <div className="text-sm font-bold">₹100.00</div>
             <div className="text-[7px] text-gray-400">1 active loans</div>
           </div>
           <div className="bg-white border border-gray-100 p-3 rounded-2xl shadow-sm">
@@ -64,7 +64,7 @@ export const PhoneMockup: React.FC = () => {
                 </svg>
               </div>
             </div>
-            <div className="text-sm font-bold">$100.00</div>
+            <div className="text-sm font-bold">₹100.00</div>
             <div className="text-[7px] text-gray-400">Owed to you</div>
           </div>
         </div>
@@ -85,7 +85,7 @@ export const PhoneMockup: React.FC = () => {
           <div className="bg-indigo-600 text-white text-[8px] px-3 py-1 rounded-full font-bold mb-3 uppercase tracking-widest">Platinum Tier</div>
           <div className="grid grid-cols-2 w-full gap-2 border-t border-gray-100 pt-3">
             <div className="text-center">
-              <div className="text-[9px] font-bold text-gray-900">$5,000.00</div>
+              <div className="text-[9px] font-bold text-gray-900">₹5,000.00</div>
               <div className="text-[7px] text-gray-400">Max Loan</div>
             </div>
             <div className="text-center">
@@ -110,7 +110,7 @@ export const PhoneMockup: React.FC = () => {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-[10px] font-bold text-gray-900">$100.00</div>
+              <div className="text-[10px] font-bold text-gray-900">₹100.00</div>
               <div className="text-[7px] text-emerald-500 font-bold">Active</div>
             </div>
           </div>

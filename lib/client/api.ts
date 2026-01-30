@@ -4,20 +4,23 @@
 /**
  * Generate an AI contract using Groq
  */
-export async function generateContract(loanDetails: {
+export async function generateContract(data: {
+  prompt: string;
   lenderName: string;
   borrowerName: string;
-  amount: number;
-  purpose: string;
-  dueDate: string;
-  interestRate?: number;
+  customClauses?: string[];
 }) {
   const response = await fetch("/api/contracts/generate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ loanDetails }),
+    body: JSON.stringify({
+      input: data.prompt,
+      lenderName: data.lenderName,
+      borrowerName: data.borrowerName,
+      customClauses: data.customClauses
+    }),
   });
 
   if (!response.ok) {

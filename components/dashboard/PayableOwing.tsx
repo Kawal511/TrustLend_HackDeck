@@ -37,7 +37,7 @@ export function PayableOwing({ owedToUser, owedByUser }: PayableOwingProps) {
                     ) : (
                         <div className="flex items-center justify-between bg-white border-2 border-black rounded-[1.5rem] px-6 py-4">
                             <span className="font-medium text-sm">No active loans</span>
-                            <span className="font-bold">$0.00</span>
+                            <span className="font-bold">₹0.00</span>
                         </div>
                     )}
                 </div>
@@ -59,7 +59,7 @@ export function PayableOwing({ owedToUser, owedByUser }: PayableOwingProps) {
                     ) : (
                         <div className="flex items-center justify-between bg-white border-2 border-black rounded-[1.5rem] px-6 py-4">
                             <span className="font-medium text-sm">No active debts</span>
-                            <span className="font-bold">$0.00</span>
+                            <span className="font-bold">₹0.00</span>
                         </div>
                     )}
                 </div>

@@ -90,7 +90,7 @@ export function VerificationDashboard() {
                 label="Collateral"
                 verified={status?.hasCollateral || false}
                 points="+25 points"
-                detail={status?.collateralValue ? `$${status.collateralValue.toLocaleString()}` : undefined}
+                detail={status?.collateralValue ? `₹${status.collateralValue.toLocaleString()}` : undefined}
               />
             </div>
 

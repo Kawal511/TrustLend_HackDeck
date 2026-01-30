@@ -31,7 +31,7 @@ export const SmarterFinanceGraphic: React.FC = () => {
           </div>
         </div>
 
-        <div className="text-5xl font-black text-[#0A1A3F] mb-6">$259.75</div>
+        <div className="text-5xl font-black text-[#0A1A3F] mb-6">₹259.75</div>
 
         <div className="relative h-28 w-full">
           <svg className="w-full h-full overflow-visible" viewBox="0 0 100 40">
@@ -45,7 +45,7 @@ export const SmarterFinanceGraphic: React.FC = () => {
             <circle cx="65" cy="15" r="4.5" fill="white" stroke="#0A1A3F" strokeWidth="3" />
             <g transform="translate(60, -14)">
               <rect x="0" y="0" width="40" height="16" rx="6" fill="#D0F1C9" />
-              <text x="20" y="11" textAnchor="middle" fontSize="6" fontWeight="900" fill="black">$259.75</text>
+              <text x="20" y="11" textAnchor="middle" fontSize="6" fontWeight="900" fill="black">₹259.75</text>
             </g>
           </svg>
 

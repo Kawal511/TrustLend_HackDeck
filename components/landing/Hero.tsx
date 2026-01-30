@@ -15,7 +15,7 @@ export const Hero: React.FC = () => {
         </p>
 
         <div className="flex flex-wrap items-center gap-8">
-          <Link href="/" className="bg-lime-400 hover:bg-lime-500 text-black px-8 py-4 rounded-full font-bold flex items-center gap-3 transition-all group">
+          <Link href="/dashboard" className="bg-lime-400 hover:bg-lime-500 text-black px-8 py-4 rounded-full font-bold flex items-center gap-3 transition-all group">
             Start for free
             <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center -rotate-45 group-hover:rotate-0 transition-transform">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

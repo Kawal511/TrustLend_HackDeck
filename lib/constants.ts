@@ -45,10 +45,9 @@ export const REMINDER_DAYS = {
 } as const;
 
 export const CURRENCIES = [
-    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
     { code: 'EUR', symbol: '€', name: 'Euro' },
-    { code: 'GBP', symbol: '£', name: 'British Pound' },
-    { code: 'INR', symbol: '₹', name: 'Indian Rupee' }
+    { code: 'GBP', symbol: '£', name: 'British Pound' }
 ] as const;
 
-export const DEFAULT_CURRENCY = 'USD';
+export const DEFAULT_CURRENCY = 'INR';

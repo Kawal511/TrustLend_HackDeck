@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Search, Calendar, Bell, MessageSquare } from "lucide-react";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { Input } from "@/components/ui/input";
@@ -7,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { ExportDataButton } from "@/components/landing/ExportDataButton";
 
 const tabs = [
-    { name: "Overview", href: "/" },
+    { name: "Overview", href: "/dashboard" },
     { name: "Loans", href: "/loans" },
     { name: "Requests", href: "/borrow" },
     { name: "My Network", href: "/network" },
@@ -17,6 +19,9 @@ const tabs = [
 
 export function TopNav() {
     const pathname = usePathname();
+
+    const [mounted, setMounted] = React.useState(false);
+    React.useEffect(() => setMounted(true), []);
 
     return (
         <header className="bg-background px-8 pt-8 pb-4">
@@ -28,6 +33,7 @@ export function TopNav() {
                     </Link>
 
                     <div className="flex items-center gap-4">
+                        {mounted && <ExportDataButton />}
                         <div className="relative w-64 hidden sm:block">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
